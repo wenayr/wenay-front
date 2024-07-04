@@ -7,6 +7,6 @@ window.onload = async function() {
     console.log("2321312");
     StartReact()
 
-}
+} // 2
 
 
