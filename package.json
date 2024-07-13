@@ -1,7 +1,23 @@
 {
-  "name": "client",
-  "version": "1.0.0",
+  "name": "wemay-react",
+  "version": "0.0.1",
+  "description": "Common react",
+  "strict": true,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
+
+    "build & watch": "npm run _clearDir  &&  tsc --watch",
+    "build2": "npm run _clearDir  &&  tsc --build --verbose  &&  npm run _afterBuild",
+    "_afterBuild" : "node copyCompiledFiles.mjs .\\dist  &&  cd dist  &&  npm pkg delete scripts devDependencies private",
+    "test": "npm run --prefix ./test test",
+    "pack": "npm run _afterBuild  &&  npm pack .\\dist",
+    "_publish": "npm run test  &&  npm publish .\\dist",
+    "publish": "npm run _afterBuild  &&  npm run _publish",
+    "build & publish": "npm run build2  &&  npm run _publish",
+
+    "_clearDir": "IF exist lib (rd /s /q lib)  &&  mkdir lib  &&  copy tsconfig_lib.json lib\\tsconfig.json  &&  echo:",
+
     "start-bin2": "NODE_ENV=production npm start",
     "lint2": "eslint src --fix",
     "buildWebpack": "webpack --mode production",
@@ -30,7 +46,10 @@
     "wenay-common": "^1.0.149"
   },
   "devDependencies": {
-    "@types/node": "^18.19.39",
+    "npm": "^10.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3",
+    "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "dotenv": "^8.2.0",
@@ -46,5 +65,13 @@
     "development": [
       ">1%"
     ]
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./lib/client": "./lib/client.js",
+    "./lib/server": "./lib/server.js",
+    "./client": "./lib/client.js",
+    "./server": "./lib/server.js",
+    "./package.json": "./package.json"
   }
 }

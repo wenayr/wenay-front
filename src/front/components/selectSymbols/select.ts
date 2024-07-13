@@ -1,6 +1,5 @@
 import {Params} from "wenay-common";
 import {GridReadyEvent} from "ag-grid-community";
-import type {tInfoSymDB} from "../../../../../serverHistoryLoader/src/myDB/interface";
 // import type {tRealtimeData} from "../../../../../serverHistoryLoader/src/common/exchangesCommon/type";
 
 export const selectFilterSymbols = {
@@ -53,13 +52,3 @@ export const settingLoadSymbols = {
 }
 
 type trs<T> = {[P in keyof T]: (string)}
-export type tableSymbols = GridReadyEvent<trs<tRowsSymbols>, any>
-export type tRowsSymbols = tInfoSymDB & { start: Date, bars: number } // & Partial<tRealtimeData>
-
-export const dataRowSymbols = {
-    AllSym: [] as trs<tRowsSymbols>[],
-    exchange: [] as (string | number)[],
-    category: [] as (string | number)[],
-    type: [] as (string | number)[],
-    tfSec: [] as (string | number)[],
-}

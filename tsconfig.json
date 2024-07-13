@@ -3,13 +3,6 @@
     "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "node",
-
-//    "verbatimModuleSyntax": true,
-    //    "resolveJsonModule": true,
-    //    "isolatedModules": true,
-
-//    "verbatimModuleSyntax" : false,
-
     "strictNullChecks": true,
     "noImplicitAny": false,
     "noImplicitThis": true,
@@ -23,6 +16,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noEmit": true,
+    "outDir": "./lib",
 
     "jsx": "react-jsx",
     "lib": [

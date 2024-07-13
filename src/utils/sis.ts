@@ -1,4 +1,4 @@
-import {ApiFacade} from "./apiFacade";
+// import {ApiFacade} from "./apiFacade";
 import {CashFuncMapCash} from "./cash";
 import {mapResiReact} from "../front/components/common/Resizeble";
 import {ExRNDMap} from "../front/components/commonNew/RNDFunc";
@@ -28,11 +28,3 @@ export const Cash = CashFuncMapCash(
     ]
 )
 
-
-function f() {
-    return {
-        ...ApiFacade
-    }
-}
-
-export const ApiData = f()
