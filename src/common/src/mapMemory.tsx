@@ -1,5 +1,6 @@
-import {ExRNDMap, mapResiReact} from "../../lib";
-import {CashFuncMapCash} from "./src/cash";
+import {mapResiReact} from "./Resizeble";
+import {ExRNDMap} from "./RNDFunc";
+import {CashFuncMapCash} from "./cash";
 
 const staticProps = new Map<string,object>()
 
@@ -11,11 +12,54 @@ export function staticGet(key: any) {
     return staticProps.get(key)
 }
 
-export function staticGetAdd<T extends object>(key: any, def: T) {
-    const t = (staticProps.get(key) || staticProps.set(key, def).get(key)!) as T
-    return Object.assign(def, t) // t //
+function isObject(item: any): boolean {
+    return item !== null && typeof item === 'object' && !Array.isArray(item);
 }
 
+export function deepMergeWithMap(target: any, source: any, visited = new Map<any, any>()) {
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) {
+                    target[key] = {};
+                }
+                // Check if the source object has already been visited
+                if (!visited.has(source[key])) {
+                    visited.set(source[key], {});
+                    deepMergeWithMap(target[key], source[key], visited);
+                } else {
+                    target[key] = visited.get(source[key]);
+                }
+            } else {
+                target[key] = source[key];
+            }
+        }
+    }
+    return target;
+}
+
+
+const map = new Map<object, boolean>
+
+export function staticGetAdd<T extends object>(key: any, def: T, options: {abs?: boolean, deepAutoMerge?: boolean} = {}) {
+    if (options.deepAutoMerge && !map.get(def)) {
+        map.set(def, true)
+        if (options.deepAutoMerge) staticProps.set(key, deepMergeWithMap(staticProps.get(key) ?? {}, def))
+    }
+    if (options.abs) staticProps.set(key, def)
+    const t = (staticProps.get(key) || staticProps.set(key, def).get(key)!) as T
+    return t// Object.assign(def, t) // t //
+}
+
+export function staticGetById<T extends object>(key: any, def: T, id: string|number){
+    const t = map.get(key)
+    type t = {__id: string|number, data: T}
+    const el: t = {__id: id, data: def}
+    if ((el && el.__id != id) || !el) {
+        return staticGetAdd(key, el, {abs: true}).data
+    }
+    return el.data
+}
 export const Cash = CashFuncMapCash(
     [
         ["mapResiReact", mapResiReact],

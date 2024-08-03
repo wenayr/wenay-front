@@ -1,36 +1,36 @@
 {
-  "name": "wemay-react",
-  "version": "0.0.1",
+  "name": "wenay-react",
+  "version": "0.0.28",
   "description": "Common react",
   "strict": true,
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-
     "build & watch": "npm run _clearDir  &&  tsc --watch",
-    "build2": "npm run _clearDir  &&  tsc --build --verbose  &&  npm run _afterBuild",
+    "build": "npm run _clearDir  &&  tsc --build --verbose  &&  npm run _afterBuild",
     "_afterBuild" : "node copyCompiledFiles.mjs .\\dist  &&  cd dist  &&  npm pkg delete scripts devDependencies private",
     "test": "npm run --prefix ./test test",
     "pack": "npm run _afterBuild  &&  npm pack .\\dist",
-    "_publish": "npm run test  &&  npm publish .\\dist",
+    "_publish": "npm publish .\\dist",
     "publish": "npm run _afterBuild  &&  npm run _publish",
-    "build & publish": "npm run build2  &&  npm run _publish",
+    "build & publish": "npm run build  &&  npm run _publish",
 
-    "_clearDir": "IF exist lib (rd /s /q lib)  &&  mkdir lib  &&  copy tsconfig_lib.json lib\\tsconfig.json  &&  echo:",
-
-    "start-bin2": "NODE_ENV=production npm start",
-    "lint2": "eslint src --fix",
-    "buildWebpack": "webpack --mode production",
-    "start": "react-app-rewired start",
-    "buildSite": "react-app-rewired build",
-    "start_NoEslint": "set DISABLE_ESLINT_PLUGIN=true&& react-app-rewired start",
-    "build-bin2": "NODE_ENV=production node --loader ts-node/esm ./build.ts && rollup -c",
-    "build": "react-app-rewired build",
-    "addBuildToGit": "git add build && git commit -a -m \"add build folder clientBacktest\" && git push origin history",
-    "buildWin": "set \"GENERATE_SOURCEMAP=false\" && react-app-rewired build && npm run addBuildToGit",
-    "buildMac": "export \"GENERATE_SOURCEMAP=false\" && react-app-rewired build && npm run addBuildToGit",
-    "nomI": "npm i",
-    "update": "npm update"
+    "_clearDir": "IF exist lib (rd /s /q lib)  &&  mkdir lib  &&  copy tsconfig_lib.json lib\\tsconfig.json  &&  echo:"
+  },
+  "files": [
+    "lib/**/*",
+    "!**/*.tsbuildinfo"
+  ],
+  "author": "wenay",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    }
   },
   "dependencies": {
     "path-browserify": "^1.0.1",
@@ -40,16 +40,18 @@
     "react-dropzone": "^14.2.3",
     "react-rnd": "^10.4.11",
     "socket.io-client": "^4.7.5",
-    "ag-grid-community": "^31.3.2",
-    "ag-grid-react": "^31.3.2",
+    "ag-grid-community": "^32.0.2",
+    "ag-grid-react": "^32.0.2",
     "lightweight-charts": "^4.1.6",
     "wenay-common": "^1.0.149"
   },
   "devDependencies": {
-    "npm": "^10.8.1",
+    "@types/node": "^20.12.14",
+    "@types/uuid": "^9.0.1",
+    "npm": "^10.8.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
-    "@types/node": "^20.14.9",
+    "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "dotenv": "^8.2.0",
@@ -57,6 +59,10 @@
     "webpack-cli": "^5.1.4"
   },
   "eslintConfig": {},
+  "engines": {
+    "node": ">=18",
+    "vscode": "^1.22.0"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -68,10 +74,6 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./lib/client": "./lib/client.js",
-    "./lib/server": "./lib/server.js",
-    "./client": "./lib/client.js",
-    "./server": "./lib/server.js",
     "./package.json": "./package.json"
   }
 }

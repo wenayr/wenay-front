@@ -1,38 +1,22 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "strictNullChecks": true,
-    "noImplicitAny": false,
-    "noImplicitThis": true,
-    "noUncheckedIndexedAccess": false,
-    "allowJs": true,
-    "checkJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noEmit": true,
-    "outDir": "./lib",
-
-    "jsx": "react-jsx",
+    "target": "ESNext",
     "lib": [
-      "esnext",
-      "dom"
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
     ],
-    "plugins": [
-    ]
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "lib",
+    "declaration": true,
+    "jsx": "react-jsx"
   },
-  "paths": {
-      //"typescript": ["../node_modules/typescript"]
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
+  "files": [
+    "src/index.ts"
   ]
 }
