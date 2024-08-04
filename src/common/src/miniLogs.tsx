@@ -2,12 +2,11 @@
 import {copyToClipboard, timeLocalToStr_hhmmss} from "wenay-common";
 import {AgGridReact} from "ag-grid-react";
 import React, {useRef} from "react";
-import {GridReadyEvent} from "ag-grid-community";
+import {CellMouseDownEvent, GridReadyEvent} from "ag-grid-community";
 import {mouseAdd} from "./mouse";
 
-export function MiniLogs({data}:{data: any[]}){
+export function MiniLogs({data}:{data: any[], onClick?: (e: CellMouseDownEvent<any, any>) => any}){
     const apiGrid = useRef<GridReadyEvent<any, any> | null>(null);
-    console.log(data)
     const columns = [
         {
             field: "time",
@@ -57,14 +56,15 @@ export function MiniLogs({data}:{data: any[]}){
             columnDefs = {columns as any}
             onCellMouseDown = {(e)=>{
                 // @ts-ignore
-                if (e.event?.button == 2) {
-                    // copyToClipboard(e.value)
-                    mouseAdd.map.set("sym",[
-                        {
-                            name: "copy", onClick: ()=> {copyToClipboard(e.value)}
-                        }
-                    ])
-                }
+                onClick?.(e)
+                // if (e.event?.button == 2) {
+                //     // copyToClipboard(e.value)
+                //     mouseAdd.map.set("sym",[
+                //         {
+                //             name: "copy", onClick: ()=> {copyToClipboard(e.value)}
+                //         }
+                //     ])
+                // }
             }}
         ></AgGridReact>
     </div>
