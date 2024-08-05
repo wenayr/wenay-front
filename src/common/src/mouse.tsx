@@ -16,6 +16,8 @@ export const mouseAdd = {
     map: new Map<string, (tMenuReact|false)[]>
 }
 
+
+
 export function MouseR(...agr: Parameters<typeof MenuR>) {
     const datum = mouse.value //staticGetAdd(mouse.name, mouse.value)
     updateBy(datum)
@@ -28,6 +30,15 @@ export function MouseR(...agr: Parameters<typeof MenuR>) {
 
     }
     return MenuR({...(agr[0] ?? []), other, statusOn: datum.status, onUnClick: ()=> {mouseAdd.map.clear() }})
+}
+
+export const MouseApi = {
+    info: mouse,
+    map: mouseAdd.map,
+    draw(){
+        renderBy(mouse.value)
+    },
+    MouseReact: MouseR
 }
 
 export function MouseSwitch({}) {
