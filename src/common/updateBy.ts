@@ -17,6 +17,20 @@ export function renderBy(a: object, ms?: number) {
     else t()
 }
 
+export function renderBy2(a: object, ms?: number, reverse = false) {
+    const ar: ((a?: any) => void)[] = []
+    map3.get(a)?.forEach(e=>ar.push(e))
+    const t = reverse ? () => ar.reverse().forEach(e=>e(a))
+        : () => ar.forEach(e=>e(a))
+    if (ms) {
+        (mapWait.get(a) || mapWait.set(a, waitRun()).get(a)!)
+            .refreshAsync(ms, ()=> {
+                mapWait.delete(a)
+                t()})
+    }
+    else t()
+}
+
 export function updateBy<T extends object>(a: T, f?: React.Dispatch<React.SetStateAction<T>> | ((a: T) => void)) {
     const t = useState(0)
     useLayoutEffect(() => {

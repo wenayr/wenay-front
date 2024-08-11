@@ -18,6 +18,19 @@ export const mouseAdd = {
 
 
 
+/**
+ * Executes the MouseR method.
+ *
+ * This method takes multiple arguments of type MenuR and performs the following operations:
+ * 1. Retrieves the mouse value from the mouse variable.
+ * 2. Updates the data using the retrieved mouse value.
+ * 3. Initializes the 'other' variable with an array of tMenuReact objects or false.
+ * 4. If there are additional elements in the mouseAdd map, they are added to the 'other' array.
+ * 5. Returns the result of invoking the MenuR method with the updated arguments.
+ *
+ * @param {...Parameters<typeof MenuR>} agr - An array of arguments for the MenuR method.
+ * @returns {ReturnType<typeof MenuR>} - The result of invoking the MenuR method.
+ */
 export function MouseR(...agr: Parameters<typeof MenuR>) {
     const datum = mouse.value //staticGetAdd(mouse.name, mouse.value)
     updateBy(datum)

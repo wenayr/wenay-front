@@ -38,6 +38,31 @@ export const DivRnd: typeof DivRndBase = (a) => {
     return DivRndBase({...a, children: ff})
 }
 
+/**
+ * This method is used to render a resizable and draggable component with optional header and close button.
+ *
+ * @param {Object} props - The component props.
+ * @param {React.ReactNode} props.children - The content inside the component.
+ * @param {string} props.keyForSave - The key used to save the component's position and size.
+ * @param {Object} props.position - The initial position of the component.
+ * @param {Object} props.size - The initial size of the component.
+ * @param {boolean} [props.overflow=true] - Whether to enable overflow scrolling on the component.
+ * @param {number} [props.zIndex=9] - The z-index of the component.
+ * @param {Function} [props.onUpdate] - Callback function called when the component is resized.
+ * @param {Function} [props.disableDragging] - Callback function to disable dragging.
+ * @param {string} [props.className] - The CSS class name for the component.
+ * @param {React.ReactNode} [props.header] - The header component to be displayed. If not provided, a default header will be used.
+ * @param {boolean} [props.moveOnlyHeader] - Whether to allow moving the component only by dragging the header.
+ * @param {Object} [props.limit] - The limits for the component's position.
+ * @param {Object} [props.limit.x] - The x-axis limits for the component's position.
+ * @param {number} [props.limit.x.min] - The minimum x-axis limit.
+ * @param {number} [props.limit.x.max] - The maximum x-axis limit.
+ * @param {Object} [props.limit.y] - The y-axis limits for the component's position.
+ * @param {number} [props.limit.y.min] - The minimum y-axis limit.
+ * @param {number} [props.limit.y.max] - The maximum y-axis limit.
+ * @param {Function} [props.onCLickClose] - Callback function called when the close button is clicked.
+ * @returns {React.ReactNode} - The rendered component.
+ */
 export function DivRndBase({
                             children,
                             keyForSave: ks,
