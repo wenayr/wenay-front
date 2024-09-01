@@ -1,11 +1,11 @@
 import {AgGridReact} from "ag-grid-react";
-import {mouseAdd} from "./mouse";
 import React, {useCallback, useEffect, useRef} from "react";
 import {copyToClipboard, timeLocalToStr_hhmmss, UnArray} from "wenay-common";
 import {renderBy, updateBy} from "../updateBy";
 import {ColDef, ColGroupDef, GridReadyEvent} from "ag-grid-community";
 import {ParametersReact} from "./Parameters2";
 import {staticGetAdd} from "./mapMemory";
+import {mouseMenuApi} from "./menu/menuMouse";
 
 type tLogsInput<T extends object> = T & {id : string, var?: number, time: Date, txt: string}
 type tLogs<T extends object = {}> = tLogsInput<T> & {num: number}
@@ -173,7 +173,7 @@ export function PageLogs({update}: {update?: number}) {
                     // @ts-ignore
                     if (e.event?.button == 2) {
                         // copyToClipboard(e.value)
-                        mouseAdd.map.set("sym",[
+                        mouseMenuApi.map.set("sym",[
                             {
                                 name: "copy", onClick: ()=> {copyToClipboard(e.value)}
                             }

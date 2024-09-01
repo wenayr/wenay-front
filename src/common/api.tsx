@@ -5,15 +5,16 @@ export * from "./src/addDownAnyKey";
 export * from "./src/commonFuncReact";
 export * from "./src/input";
 
+export * from "./src/menu/menu";
+export * from "./src/menu/menuMouse";
+export * from "./src/menu/menuR";
+
 export * from "./src/logs";
-export * from "./src/menuR";
 export * from "./src/miniButton";
-export * from "./src/miniMenu";
-export * from "./src/mouse";
 export * from "./src/miniLogs";
 
 export * from "./src/MyResizeObserver";
-export * from "./src/onher";
+export * from "./src/other";
 export * from "./src/Parameters2";
 export * from "./src/arrayPromise";
 

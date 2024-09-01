@@ -1,9 +1,7 @@
-// import type {typeLogs} from "../../../../../serverHistoryLoader/src/exchangeBack/minitype";
 import {copyToClipboard, timeLocalToStr_hhmmss} from "wenay-common";
 import {AgGridReact} from "ag-grid-react";
 import React, {useRef} from "react";
 import {CellMouseDownEvent, GridReadyEvent} from "ag-grid-community";
-import {mouseAdd} from "./mouse";
 
 export function MiniLogs({data, onClick}:{data: any[], onClick?: (e: CellMouseDownEvent<any, any>) => any}){
     const apiGrid = useRef<GridReadyEvent<any, any> | null>(null);

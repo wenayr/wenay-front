@@ -23,6 +23,6 @@ export function getComparatorGrid<T = any>(func?: (...param: paramsCompare<T>) =
     return (...param) => {
         const [a1, b1, modeA, modeB, inv] = param
         const [a, b] = func ? func(...param) : [a1, b1]
-        return ((a != undefined && !Number.isNaN(a)) && (b != undefined && !Number.isNaN(b))) ? a - b : a == b ? 0 : (!Number.isNaN(b) && b != undefined) ? (inv ? -1 : 1) : (inv ? 1 : -1)
+        return ((typeof a == "number" && !Number.isNaN(a)) && (typeof b == "number" && !Number.isNaN(b))) ? a - b : a == b ? 0 : (!Number.isNaN(b) && b != undefined) ? (inv ? -1 : 1) : (inv ? 1 : -1)
     }
 }
