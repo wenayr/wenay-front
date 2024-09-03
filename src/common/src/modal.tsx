@@ -1,6 +1,6 @@
 import React from "react";
 import {InputPageModal} from "./input";
-import {renderBy} from "../updateBy";
+import {renderBy, updateBy} from "../updateBy";
 
 export function inputModal({setModalJSX, func, name, txt}: {
     txt?: string,
@@ -36,6 +36,10 @@ export function GetModalJSX(){
                 renderBy(data)
             },
             get JSX() {return _jsx},
+            Render(){
+                updateBy(data)
+                return _jsx
+            },
             addJSX(jsx: React.JSX.Element) {
                 const c = check(jsx)
                 if (c == -1) {
@@ -52,7 +56,11 @@ export function GetModalJSX(){
                     renderBy(data)
                 }
             },
-            get arrJSX() {return _jsxArr.map(e=><div key={e.key}>{e.jsx}</div>)}
+            get arrJSX() {return _jsxArr.map(e=><div key={e.key}>{e.jsx}</div>)},
+            RenderArr(){
+                updateBy(data)
+                return _jsxArr.map(e=><div key={e.key}>{e.jsx}</div>)
+            }
         }
     })()
     return data
