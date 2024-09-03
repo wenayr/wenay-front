@@ -51,7 +51,7 @@ export function updateBy<T extends object>(a: T, f?: React.Dispatch<React.SetSta
             // без особых причин только для первого рендера - необходима два вызова, иначе - вызов не проходит
             if (t[0] == 0) {
                 t[1](t[0]++)
-                // t[1](t[0]++)
+                t[1](t[0]++)
             }
             else t[1](t[0]++)
         })
