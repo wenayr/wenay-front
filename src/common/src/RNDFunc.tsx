@@ -290,7 +290,6 @@ export function DivRndBase2({
         if (a) {
             const f1 = (e: MouseEvent) => {
                 if (last.current == null) {
-                    console.log(last.current, {x,y}, e)
                     last.current = {
                         x: x - e.clientX,
                         y: y - e.clientY
@@ -353,7 +352,6 @@ export function DivRndBase2({
             }}></div>}
         </div>
     let dtr = false
-    console.log(((disableDragging?.() ?? false)))
     return <Rnd disableDragging={true}// || (moveOnlyHeader && drag)) ?? false)}
                 style={{
                     zIndex: zIndexX * 2 + zIndex
@@ -419,10 +417,7 @@ export function Drag(){
     useEffect(() => {
         if (a) {
             const f1 = (e: MouseEvent) => {
-                console.log(e.x)
-                console.log(e.y)
                 const data = last.current
-                console.log(e.buttons)
                 if (last.current == null)
                     last.current = {
                         x: e.clientY,
@@ -454,7 +449,6 @@ export function Drag(){
             left: x, top: y
         }}
         onMouseDown={e=>{
-            console.log(e)
             setA(true)
         }}
     ></div>
