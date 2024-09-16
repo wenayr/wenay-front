@@ -44,7 +44,6 @@ export function GetModalJSX(){
                 const c = check(jsx)
                 if (c == -1) {
                     _jsxArr.push({jsx, key: key++});
-                    console.log(check(jsx))
                     renderBy(data)
                 }
                 return jsx

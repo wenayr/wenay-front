@@ -1,11 +1,12 @@
 import {AgGridReact} from "ag-grid-react";
 import React, {useCallback, useEffect, useRef} from "react";
-import {copyToClipboard, timeLocalToStr_hhmmss, UnArray} from "wenay-common";
+import {copyToClipboard, Params, timeLocalToStr_hhmmss, UnArray} from "wenay-common";
 import {renderBy, updateBy} from "../updateBy";
 import {ColDef, ColGroupDef, GridReadyEvent} from "ag-grid-community";
 import {ParametersReact} from "./Parameters2";
 import {staticGetAdd} from "./mapMemory";
 import {mouseMenuApi} from "./menu/menuMouse";
+import {IParams} from "wenay-common/lib/Exchange/CParams";
 
 type tLogsInput<T extends object> = T & {id : string, var?: number, time: Date, txt: string}
 type tLogs<T extends object = {}> = tLogsInput<T> & {num: number}
@@ -17,27 +18,61 @@ const datumConst = {
 const datumMiniConst = {
     last: [] as tLogs[]
 }
-
-const settingLogs = {
-    // минимальная важность
-    minVarLogs: 0,
-    minVarMessage: 0
-}
+const getSettingLogs = () => ({
+    minVarLogs: {name:"мин. важность для оповещения", range: {min: 0 , max: 25, step: 1}, value: 0},
+    minVarMessage: {name:"мин. важность для таблицы логов", range: {min: 0 , max: 25, step: 1}, value: 0},
+    timeShow: {name:"время отображение на экране", range: {min: 1, max: 20, step: 1}, value: 2},
+    show: {name: "отображать", value: true}
+}) satisfies IParams
+const settingLogs = {params: Params.GetSimpleParams(getSettingLogs())}
 
 type tColum2<TData extends any = any> = (ColDef<TData> | ColGroupDef<TData>)
 // varMin - минимальная важность
-export function getLogsApi<T extends object = {}>(setting: {limit?: number, limitPer: number, varMin?: number}) {
+export function getLogsApi<T extends object = {}>(
+    setting: {
+        limit?: number,
+        limitPer: number,
+        varMin?: number
+    }) {
+    const datum = staticGetAdd("settingLogs",settingLogs)
     function addToArr<T>(arr: T[], data: T, limit: number){
         arr.unshift(data)
         if (arr.length > limit) arr.length = limit
     }
     let num = 0
+
+    const SettingLogsReact = ({}:{}) => <ParametersReact
+        // @ts-ignore
+        params={Params.mergeParamValuesToInfos(getSettingLogs(), datum.params)}
+        onChange = {(e)=>{
+            datum.params = Params.GetSimpleParams(e)
+            renderBy(datum)
+        }}/>
+
+
+
+
     return {
         addLogs(a: tLogsInput<T>){
             addToArr(datumMiniConst.last, {...a, num: num++}, 50)
             addToArr(datumConst.map.get(a.id) ?? datumConst.map.set(a.id,[]).get(a.id)!, {...a, num: num++}, setting.limitPer)
             renderBy(datumConst)
             renderBy(datumMiniConst)
+        },
+        params: {
+            def: getSettingLogs,
+            get() {return datum.params},
+            set(a: Params.SimpleParams<ReturnType<typeof getSettingLogs>>) {
+                datum.params = a
+                renderBy(datumMiniConst)
+                renderBy(datumConst)
+            },
+
+        },
+        React: {
+            Setting: SettingLogsReact,
+            Message: MessageEventLogs,
+            PageLogs: PageLogs
         }
     }
 }
@@ -46,13 +81,10 @@ export const logsApi = getLogsApi<{}>({limitPer: 500})
 function InputSettingLogs({}:{update?: number}) {
     const datum = staticGetAdd("settingLogs",settingLogs)
     return <ParametersReact
-        params={{
-            fd1: {name:"мин. важность для оповещения", range: {min: 0 , max: 25, step: 1}, value: datum.minVarMessage},
-            fd2: {name:"мин. важность для таблицы логов", range: {min: 0 , max: 25, step: 1}, value: datum.minVarLogs},
-        }}
+        // @ts-ignore
+        params={Params.mergeParamValuesToInfos(getSettingLogs(), datum.params)}
         onChange = {(e)=>{
-            datum.minVarMessage = e.fd1.value
-            datum.minVarLogs = e.fd2.value
+            datum.params = Params.GetSimpleParams(e)
             renderBy(datum)
         }}/>
 }
@@ -71,12 +103,12 @@ export function PageLogs({update}: {update?: number}) {
         apiGrid.current?.api.sizeColumnsToFit()
     },[update])
     updateBy(setting, ()=>{
-        if (setting.minVarLogs) {
+        if (setting.params.minVarLogs) {
             apiGrid.current?.api.setFilterModel({
                 var: {
                     filterType: 'number',
                     type: 'greaterThanOrEqual',
-                    filter: setting.minVarLogs
+                    filter: setting.params.minVarLogs
                 }})
         } else {
             apiGrid.current?.api.destroyFilter("var")
@@ -144,12 +176,12 @@ export function PageLogs({update}: {update?: number}) {
                 onGridReady = {(a)=>{
                     apiGrid.current = a  //as GridReadyEvent<tColum>
                     apiGrid.current.api.sizeColumnsToFit()
-                    if (setting.minVarLogs) {
+                    if (setting.params.minVarLogs) {
                         apiGrid.current.api.setFilterModel({
                             var: {
                                 filterType: 'number',
                                 type: 'greaterThanOrEqual',
-                                filter: setting.minVarLogs
+                                filter: setting.params.minVarLogs
                             }})
                     }
                 }}
@@ -189,7 +221,7 @@ export function PageLogs({update}: {update?: number}) {
     return <Main/>
 }
 
-function Fff({logs}: {logs: tLogs}) {
+function Message({logs}: {logs: tLogs}) {
     let red = (logs.var ?? 0) * 10
     if (red > 255) red = 255
     return <div className={"testAnime"}
@@ -213,29 +245,28 @@ function Fff({logs}: {logs: tLogs}) {
 const tt: {[key: string]: React.ReactElement} = {}
 let r = 0
 export function MessageEventLogs({zIndex} :{zIndex?: number}) {
-    let max = 10
+    let max = 8
 
     const setting = staticGetAdd("settingLogs",settingLogs)
     updateBy(tt)
     updateBy(datumMiniConst, ()=>{
         const last = datumMiniConst.last[0]
-        if (setting.minVarMessage && (!last.var || last.var < setting.minVarMessage)) return;
+        if (setting.params.minVarMessage && (!last.var || last.var < setting.params.minVarMessage)) return;
 
         let key = String(r++)
         tt[key] = <div className={"example-exit"} key = {key}>
-            <Fff logs = {last} />
+            <Message logs = {last} />
         </div>
         setTimeout(()=>{
             if (tt[key]) {
                 delete tt[key];
                 if (Object.values(tt).length < max) renderBy(tt)
             }
-        }, 8000)
+        }, setting.params.timeShow ? setting.params.timeShow * 1000 : 2000)
         renderBy(tt)
     })
-    return <div style={{maxHeight: "99%", position: "absolute", right: "20px", zIndex}}>
-        {[...Object.values(tt)].reverse().slice(0,10)}
-    </div>
+    return setting.params.show != undefined ? <div style={{maxHeight: "50vh", position: "absolute", right: "20px", zIndex}}>
+        {[...Object.values(tt)].reverse().slice(0,10)} </div> : null
 }
 
 type ty = {name: string, key: string, page: (a?: any) => React.JSX.Element | null}

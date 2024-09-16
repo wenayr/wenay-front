@@ -5,7 +5,7 @@ export function MiniButton({name, arr, get, onClick, style}: { name: string, arr
     const data = get()
     const a = Object.values(data)
     const status = a.length > 0 && !(a.indexOf(false) >= 0)
-    return <Button className={"newButtonSimple"} button={(e) => <div className={status ? "msTradeAlt msTradeActive" : "msTradeAlt"}>{name}</div>}>
+    return <Button style={style} className={"newButtonSimple"} button={(e) => <div className={status ? "msTradeAlt msTradeActive" : "msTradeAlt"}>{name}</div>}>
             <>
                 <div className={"maxSize"} style={{height: "auto", display: "flex", flexWrap: "wrap"}}>
                     {
