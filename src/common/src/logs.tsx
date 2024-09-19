@@ -22,7 +22,7 @@ const getSettingLogs = () => ({
     minVarLogs: {name:"мин. важность для оповещения", range: {min: 0 , max: 25, step: 1}, value: 0},
     minVarMessage: {name:"мин. важность для таблицы логов", range: {min: 0 , max: 25, step: 1}, value: 0},
     timeShow: {name:"время отображение на экране", range: {min: 1, max: 20, step: 1}, value: 2},
-    show: {name: "отображать", value: true}
+    show: {name: "отображать", value: true as boolean}
 }) satisfies IParams
 const settingLogs = {params: Params.GetSimpleParams(getSettingLogs())}
 
@@ -265,8 +265,11 @@ export function MessageEventLogs({zIndex} :{zIndex?: number}) {
         }, setting.params.timeShow ? setting.params.timeShow * 1000 : 2000)
         renderBy(tt)
     })
-    return setting.params.show != undefined ? <div style={{maxHeight: "50vh", position: "absolute", right: "20px", zIndex}}>
-        {[...Object.values(tt)].reverse().slice(0,10)} </div> : null
+    return <div style={{maxHeight: "50vh", position: "absolute", right: "1px", zIndex}}>
+        <div
+            onClick={()=>{setting.params.show = !setting.params.show; renderBy(tt)}}
+            style={{padding: 3, float:"right", background: setting.params.show ? "rgb(58,58,58)" : "rgb(144,60,60)"}}>{setting.params.show ? "X" : "log"}</div>
+        {setting.params.show ? [...Object.values(tt)].reverse().slice(0,10) : null} </div>
 }
 
 type ty = {name: string, key: string, page: (a?: any) => React.JSX.Element | null}

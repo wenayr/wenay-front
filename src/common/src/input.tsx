@@ -49,12 +49,13 @@ export function InputFile({callback, name = ""}: {callback: (file: File | null)=
         <div style={{marginTop: 20}} className={"msTradeAlt msTradeActive"} onClick={()=>{callback(file)}}>send</div>
     </div>
 }
-export function PageModalFree({outClick, children, size = {height: 150, width: 300}, keyForSave = "PageModalFree2"}: {outClick: ()=>any, children: React.JSX.Element, size?: {height: number, width: number}, keyForSave?: string}) {
+export function PageModalFree({outClick, children, zIndex, size = {height: 150, width: 300}, keyForSave = "PageModalFree2"}: {zIndex?: number, outClick: ()=>any, children: React.JSX.Element, size?: {height: number, width: number}, keyForSave?: string}) {
     const ref = useRef<HTMLDivElement>(null);
     useOutside({ref, outsideClick: outClick});
     return <div ref={ref} style={{position: "absolute", top: "50%", left: "50%"}}>
         <DivRnd keyForSave={keyForSave}
                 size={size}
+                zIndex={zIndex}
                 position={{y: -(size.height/2), x: -(size.width/2)}}
                 className={"fon border fonLight"}
                 moveOnlyHeader={true}>
