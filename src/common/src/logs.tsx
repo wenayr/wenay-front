@@ -265,11 +265,16 @@ export function MessageEventLogs({zIndex} :{zIndex?: number}) {
         }, setting.params.timeShow ? setting.params.timeShow * 1000 : 2000)
         renderBy(tt)
     })
+    const tr = [...Object.values(tt)].reverse().slice(0,10)
+
     return <div style={{maxHeight: "50vh", position: "absolute", right: "1px", zIndex}}>
-        <div
+        {tr && <div
             onClick={()=>{setting.params.show = !setting.params.show; renderBy(tt)}}
-            style={{padding: 3, float:"right", background: setting.params.show ? "rgb(58,58,58)" : "rgb(144,60,60)"}}>{setting.params.show ? "X" : "log"}</div>
-        {setting.params.show ? [...Object.values(tt)].reverse().slice(0,10) : null} </div>
+            style={{margin: 3, padding: 3, float:"right", background: setting.params.show ? "rgb(58,58,58)" : "rgb(144,60,60)"}}>{setting.params.show ? "X" : "log"}</div>}
+
+        {tr && <div>{setting.params.show ? [...Object.values(tt)].reverse().slice(0,10) : null}</div>}
+
+         </div>
 }
 
 type ty = {name: string, key: string, page: (a?: any) => React.JSX.Element | null}
