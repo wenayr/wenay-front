@@ -270,7 +270,11 @@ export function MessageEventLogs({zIndex} :{zIndex?: number}) {
     return <div style={{maxHeight: "50vh", position: "absolute", right: "1px", zIndex}}>
         {tr && <div
             onClick={()=>{setting.params.show = !setting.params.show; renderBy(tt)}}
-            style={{margin: 3, padding: 3, float:"right", background: setting.params.show ? "rgb(58,58,58)" : "rgb(144,60,60)"}}>{setting.params.show ? "X" : "log"}</div>}
+            style={{margin: 3, padding: 3, right: 0, position: "absolute", zIndex: 120,
+                ...setting.params.show ?
+                    {background: "rgb(58,58,58)", fontSize: "25px"} :
+                    {background: "rgb(144,60,60)"}
+        }}>{setting.params.show ? "X" : "log"}</div>}
 
         {tr && <div>{setting.params.show ? [...Object.values(tt)].reverse().slice(0,10) : null}</div>}
 
