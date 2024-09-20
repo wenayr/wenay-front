@@ -1,6 +1,7 @@
 import {mapResiReact} from "./Resizeble";
 import {ExRNDMap} from "./RNDFunc";
 import {CashFuncMapCash} from "./cash";
+import { deepClone } from "wenay-common";
 
 const staticProps = new Map<string,object>()
 
@@ -41,10 +42,13 @@ export function deepMergeWithMap(target: any, source: any, visited = new Map<any
 
 const map = new Map<object, boolean>
 
-export function staticGetAdd<T extends object>(key: any, def: T, options: {abs?: boolean, deepAutoMerge?: boolean} = {}) {
+export function staticGetAdd<T extends object>(key: any, def: T, options: {abs?: boolean, deepAutoMerge?: boolean, reversDeep?: boolean} = {reversDeep: false}) {
     if (options.deepAutoMerge && !map.get(def)) {
         map.set(def, true)
-        if (options.deepAutoMerge) staticProps.set(key, deepMergeWithMap(staticProps.get(key) ?? {}, def))
+        if (options.deepAutoMerge) {
+            if (!options.reversDeep) staticProps.set(key, deepMergeWithMap(staticProps.get(key) ?? {}, def))
+            else staticProps.set(key, deepMergeWithMap(deepClone(def), staticProps.get(key) ?? {}))
+        }
     }
     if (options.abs) staticProps.set(key, def)
     const t = (staticProps.get(key) || staticProps.set(key, def).get(key)!) as T
