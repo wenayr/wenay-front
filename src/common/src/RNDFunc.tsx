@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Rnd} from "react-rnd";
-import {renderBy, updateBy} from "../../common/updateBy";
+import { renderBy, updateBy } from "wenay-react";
 
 type tPosition = {x: number, y: number}
 type tSize = {height: number | string, width: number | string}
@@ -16,6 +16,7 @@ type tDivRndBase = {
     onCLickClose?: () => void,
     header?: React.ReactElement | boolean,
     overflow?: boolean,
+    sizeByWindow?: boolean,
     limit?: {
         x?: {max?: number, min?: number},
         y?: {max?: number, min?: number},
@@ -253,7 +254,8 @@ export function DivRndBase2({
                                 header,
                                 moveOnlyHeader,
                                 limit,
-                                onCLickClose
+                                onCLickClose,
+                                sizeByWindow = true
                             }: tDivRndBase) {
     if (onCLickClose && !limit) limit = {y: {min:0}}
 
@@ -263,6 +265,10 @@ export function DivRndBase2({
     if (ks) map = ExRNDMap.get(ks) ?? ExRNDMap.set(ks, {size: sizeDef, position: positionDef}).get(ks)
     position = map?.position ?? positionDef
     size = map?.size ?? sizeDef
+    const ref = useRef();
+    if (sizeByWindow) {
+        // window.
+    }
 
     const id2 = useRef({k: k++});
     const id = id2.current
@@ -387,6 +393,19 @@ export function DivRndBase2({
     position.y = y
     const headerD =
         <div
+            ref={e=>{
+
+                const a = e?.getBoundingClientRect()
+                if (a) {
+                    if (sizeByWindow) {
+                        if (a.x < 0) setX(x - a.x)
+                        if (a.y < 0) setY(y - a.y)
+
+                        if (typeof width == "number" && width > window.innerWidth ) setWidth(window.innerWidth)
+                        if (typeof height == "number" && height > window.innerHeight) setHeight(window.innerHeight)
+                    }
+                }
+            }}
             onTouchStart={(e)=>{
                 const a = e.changedTouches[0]
                 if (a) {
