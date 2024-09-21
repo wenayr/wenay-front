@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Rnd} from "react-rnd";
-import { renderBy, updateBy } from "wenay-react";
+import {renderBy, updateBy} from "../updateBy";
 
 type tPosition = {x: number, y: number}
 type tSize = {height: number | string, width: number | string}
