@@ -1,6 +1,6 @@
 {
   "name": "wenay-react",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "description": "Common react",
   "strict": true,
   "main": "dist/index.js",
@@ -38,12 +38,12 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
-    "react-rnd": "^10.4.11",
-    "socket.io-client": "^4.7.5",
-    "ag-grid-community": "^32.0.2",
-    "ag-grid-react": "^32.0.2",
+    "react-rnd": "^10.4.13",
+    "socket.io-client": "^4.8.1",
+    "ag-grid-community": "^32.3.0",
+    "ag-grid-react": "^32.3.0",
     "lightweight-charts": "^4.1.6",
-    "wenay-common": "^1.0.172"
+    "wenay-common": "^1.0.181"
   },
   "devDependencies": {
     "@types/node": "^20.12.14",

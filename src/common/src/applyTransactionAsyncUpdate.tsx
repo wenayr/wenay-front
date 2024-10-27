@@ -2,15 +2,19 @@ import {ColDef, GridReadyEvent} from "ag-grid-community";
 
 export function applyTransactionAsyncUpdate<T>(grid: GridReadyEvent<T, any> | null | undefined, newData: (Partial<T>)[], getId: (...a: any[]) => string, bufTable:{[id: string]: Partial<T>}) {
     if (grid?.api.getRowNode) {
-
+        const arrNew: T[]  = []
         const arr = newData.map(e => {
             const id = getId(e)//dataTable
-            const a = grid.api.getRowNode(id)?.data
-            if(!a) return null
+            const a = grid.api.getRowNode(id)?.data ?? {}
             bufTable[id] = {...a , ...(bufTable[id]??{}), ...e}
+            if (!a) {
+                arrNew.push(bufTable[id] as T)
+                return null
+            }
             return bufTable[id]
         }).filter(e => e) as T[]
-        grid.api.applyTransactionAsync({update: arr})
+        if (arr.length) grid.api.applyTransactionAsync({update: arr})
+        if (arrNew.length) grid.api.applyTransactionAsync({add: arrNew})
     }
 }
 
