@@ -5,16 +5,14 @@ export function applyTransactionAsyncUpdate<T>(grid: GridReadyEvent<T, any> | nu
         const arrNew: T[]  = []
         const arr = newData.map(e => {
             const id = getId(e)//dataTable
-            const a = grid.api.getRowNode(id)?.data ?? {}
-            bufTable[id] = {...a , ...(bufTable[id]??{}), ...e}
+            const a = grid.api.getRowNode(id)?.data
             if (!a) {
-                arrNew.push(bufTable[id] as T)
+                arrNew.push(bufTable[id] = {...(bufTable[id]??{}), ...e} as T)
                 return null
             }
-            return bufTable[id]
+            return bufTable[id] = {...a , ...(bufTable[id]??{}), ...e} as T
         }).filter(e => e) as T[]
-        if (arr.length) grid.api.applyTransactionAsync({update: arr})
-        if (arrNew.length) grid.api.applyTransactionAsync({add: arrNew})
+        grid.api.applyTransactionAsync({update: arr, add: arrNew})
     }
 }
 
