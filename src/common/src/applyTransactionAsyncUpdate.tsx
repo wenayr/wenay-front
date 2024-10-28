@@ -12,7 +12,11 @@ export function applyTransactionAsyncUpdate<T>(grid: GridReadyEvent<T, any> | nu
             }
             return bufTable[id] = {...a , ...(bufTable[id]??{}), ...e} as T
         }).filter(e => e) as T[]
-        grid.api.applyTransactionAsync({update: arr, add: arrNew})
+        if (arrNew.length) {
+            // console.log(arrNew.length);
+            grid.api.applyTransaction({add: arrNew})
+        }
+        if (arr.length) grid.api.applyTransactionAsync({update: arr})
     }
 }
 
