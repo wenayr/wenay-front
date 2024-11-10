@@ -1,6 +1,6 @@
 {
   "name": "wenay-react",
-  "version": "0.0.59",
+  "version": "0.0.60",
   "description": "Common react",
   "strict": true,
   "main": "dist/index.js",
@@ -43,7 +43,7 @@
     "ag-grid-community": "^32.3.0",
     "ag-grid-react": "^32.3.0",
     "lightweight-charts": "^4.1.6",
-    "wenay-common": "^1.0.181"
+    "wenay-common": "^1.0.182"
   },
   "devDependencies": {
     "@types/node": "^20.12.14",
