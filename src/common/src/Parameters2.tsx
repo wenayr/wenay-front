@@ -398,7 +398,7 @@ function ParametersBaseReact<TParams extends Params.IParamsExpandableReadonly = 
 
                 const simpleParameter = (element: React.JSX.Element | null) => {
                     if (!element) return null;
-                    return <CParameter key={key + "a1"} name={nameT} enabled={parentEnabled && enabled != false}>
+                    return <CParameter key={key + "a1"} name={nameT} enabled={parentEnabled && enabled != false} commentary={param.commentary}>
                         {element}
                         {enabled != null ?
                             CheckBox(
@@ -497,7 +497,7 @@ function ParametersBaseReact<TParams extends Params.IParamsExpandableReadonly = 
                                     set(array);
                                 }
                                 const paramL = (hover: boolean) =>
-                                    <CParameter name={<>{hover && !param.constLength && onHoverElement}{nameElement}</>}>
+                                    <CParameter name={<>{hover && !param.constLength && onHoverElement}{nameElement}</>} commentary={param.commentary}>
                                         {
                                             Param(onSet, itemVal, type, range, (param as Params.IParamEnum).labels)
                                         }

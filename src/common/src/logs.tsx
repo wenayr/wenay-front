@@ -6,7 +6,6 @@ import {ColDef, ColGroupDef, GridReadyEvent} from "ag-grid-community";
 import {ParametersReact} from "./Parameters2";
 import {staticGetAdd} from "./mapMemory";
 import {mouseMenuApi} from "./menu/menuMouse";
-import {IParams} from "wenay-common/lib/Exchange/CParams";
 
 type tLogsInput<T extends object> = T & {id : string, var?: number, time: Date, txt: string}
 type tLogs<T extends object = {}> = tLogsInput<T> & {num: number}
@@ -23,7 +22,7 @@ const getSettingLogs = () => ({
     minVarMessage: {name:"мин. важность для таблицы логов", range: {min: 0 , max: 25, step: 1}, value: 0},
     timeShow: {name:"время отображение на экране", range: {min: 1, max: 20, step: 1}, value: 2},
     show: {name: "отображать", value: true as boolean}
-}) satisfies IParams
+}) satisfies Params.IParams
 const settingLogs = {params: Params.GetSimpleParams(getSettingLogs())}
 
 type tColum2<TData extends any = any> = (ColDef<TData> | ColGroupDef<TData>)

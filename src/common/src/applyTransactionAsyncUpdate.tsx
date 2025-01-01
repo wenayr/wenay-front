@@ -1,6 +1,11 @@
 import {ColDef, GridReadyEvent} from "ag-grid-community";
-
-export function applyTransactionAsyncUpdate<T>(grid: GridReadyEvent<T, any> | null | undefined, newData: (Partial<T>)[], getId: (...a: any[]) => string, bufTable:{[id: string]: Partial<T>}) {
+type options = {update?: boolean, add?: boolean}
+const optionsDef = {
+    update: true,
+    add: true
+}
+export function applyTransactionAsyncUpdate<T>(grid: GridReadyEvent<T, any> | null | undefined, newData: (Partial<T>)[], getId: (...a: any[]) => string, bufTable:{[id: string]: Partial<T>}, option?: options) {
+    const op = {...(option??{}), ...optionsDef}
     if (grid?.api.getRowNode) {
         const arrNew: T[]  = []
         const arr = newData.map(e => {
@@ -12,11 +17,11 @@ export function applyTransactionAsyncUpdate<T>(grid: GridReadyEvent<T, any> | nu
             }
             return bufTable[id] = {...a , ...(bufTable[id]??{}), ...e} as T
         }).filter(e => e) as T[]
-        if (arrNew.length) {
+        if (arrNew.length && op.update) {
             // console.log(arrNew.length);
             grid.api.applyTransaction({add: arrNew})
         }
-        if (arr.length) grid.api.applyTransactionAsync({update: arr})
+        if (arr.length && op.add) grid.api.applyTransactionAsync({update: arr})
     }
 }
 

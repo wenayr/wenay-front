@@ -10,6 +10,7 @@ export * from "./src/menu/menuMouse";
 export * from "./src/menu/menuR";
 
 export * from "./src/logs";
+export * from "./src/logs3";
 export * from "./src/miniButton";
 export * from "./src/miniLogs";
 
@@ -20,6 +21,7 @@ export * from "./src/arrayPromise";
 
 export * from "./src/Resizeble";
 export * from "./src/RNDFunc";
+export * from "./src/RNDFunc3";
 export * from "./src/styleGrid";
 export * from "./src/modal";
 export * from "./src/mapMemory";
