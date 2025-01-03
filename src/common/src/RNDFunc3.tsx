@@ -81,7 +81,6 @@ export function DivRndBase3({
     position = map?.position ?? positionDef;
     size = map?.size ?? sizeDef;
 
-    const ref = useRef<any>();
     // Если нужно вписаться в окно по размеру
     if (sizeByWindow) {
         // ...здесь можно добавить логику проверки/коррекции на window.innerWidth, window.innerHeight и т.д.
@@ -223,7 +222,6 @@ export function DivRndBase3({
                 renderBy(openWindows);
             }
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Обновляем в карте координаты и размер, если задан keyForSave

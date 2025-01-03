@@ -92,7 +92,6 @@ export function DivRndBase2({
     if (ks) map = ExRNDMap.get(ks) ?? ExRNDMap.set(ks, {size: sizeDef, position: positionDef}).get(ks)
     position = map?.position ?? positionDef
     size = map?.size ?? sizeDef
-    const ref = useRef();
     if (sizeByWindow) {
         // window.
     }

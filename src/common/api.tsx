@@ -9,10 +9,10 @@ export * from "./src/menu/menu";
 export * from "./src/menu/menuMouse";
 export * from "./src/menu/menuR";
 
-export * from "./src/logs";
-export * from "./src/logs3";
+export * from "./src/logs/logs";
+export * from "./src/logs/logs3";
 export * from "./src/miniButton";
-export * from "./src/miniLogs";
+export * from "./src/logs/miniLogs";
 
 export * from "./src/MyResizeObserver";
 export * from "./src/other";

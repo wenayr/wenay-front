@@ -3,7 +3,7 @@ import React, {HTMLAttributes, ReactElement, useEffect, useRef, useState} from "
 export const StyleOtherRow: React.CSSProperties = {display: "flex", flexDirection: "row", flex: "auto 1 1"}
 export const StyleOtherColum: React.CSSProperties = {display: "flex", flexDirection: "column", flex: "auto 0 1"}
 
-export function useOutside({outsideClick, ref = useRef<HTMLDivElement>(null), status = true}: {ref?: React.RefObject<HTMLDivElement>, outsideClick: () => void, status?: boolean}) {
+export function useOutside({outsideClick, ref = useRef<HTMLDivElement|null>(null), status = true}: {ref?: React.RefObject<HTMLDivElement|null>, outsideClick: () => void, status?: boolean}) {
     useEffect(() => {
         if (status) {
             function handleClickOutside(event: any) {

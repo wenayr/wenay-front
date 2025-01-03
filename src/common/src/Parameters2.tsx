@@ -120,7 +120,11 @@ function InputTime(set: (data: string) => void, value: string | const_Date, rang
                onInput={(e) => {
                    setVal(Number(e.currentTarget.value));
                }}
-               ref={(ref) => ref ? setResizeableElement(ref) : null}
+               ref={(ref) => {
+                   if (ref) {
+                       setResizeableElement(ref);
+                   }
+               }}
         />
         <div>
             <input type={step % TF.D1.msec == 0 ? "date" : "datetime-local"}
@@ -155,7 +159,11 @@ function InputTime(set: (data: string) => void, value: string | const_Date, rang
                    setVal(Number(target.value));
                }}
             //onMouseEnter={()=>console.log("!!!", deepClone(_ref?.classList))}
-               ref={(ref) => _ref = ref}
+               ref={(ref) => {
+                   if (ref) {
+                       _ref = ref;
+                   }
+               }}
         />
     </>
 }
@@ -179,7 +187,11 @@ function InputList<T extends number | string | boolean | const_Date>(set: (data:
         onChange={(select) => {
             set(convertType(select.target.value));
         }}
-        ref={(ref) => ref ? setResizeableElement(ref) : null}>
+        ref={(ref) => {
+            if (ref) {
+                setResizeableElement(ref);
+            }
+        }}>
         {
             range.map((a, i) => {
                 return <option
@@ -214,7 +226,11 @@ function InputNumber(set: (data: number)=>void, value: number, range: Readonly<P
                    set(Number(e.currentTarget.value));
                    if (_ref) _ref.step = e.currentTarget.step;
                }}
-               ref={(ref) => ref ? setResizeableElement(ref) : null}
+               ref={(ref) => {
+                   if (ref) {
+                       setResizeableElement(ref);
+                   }
+               }}
         />
         <input required className="toNumberInput inputCan"
                type="number"
@@ -252,7 +268,7 @@ function InputNumber(set: (data: number)=>void, value: number, range: Readonly<P
 
 function InputListArray(set: (data: number[]) => void, values: readonly number[], range: readonly number[], rangeLabels?: readonly string[]): React.JSX.Element;
 function InputListArray(set: (data: string[]) => void, values: readonly string[], range: readonly string[], rangeLabels?: readonly string[]): React.JSX.Element;
-function InputListArray(set: (data: number[] | string[]) => void, values: Readonly<number[] | string[]>, range: Readonly<number[] | string[]>, rangeLabels?: readonly string[]): JSX.Element;
+function InputListArray(set: (data: number[] | string[]) => void, values: Readonly<number[] | string[]>, range: Readonly<number[] | string[]>, rangeLabels?: readonly string[]): React.JSX.Element;
 function InputListArray<T extends number | string>(set: (data: T[]) => void, values: readonly T[], range: readonly T[], rangeLabels?: readonly string[]) {
     function toType(val: string, type: string) {
         return type == "number" ? Number(val) : String(val);
@@ -270,7 +286,11 @@ function InputListArray<T extends number | string>(set: (data: T[]) => void, val
                        set(values);
                    }}
                    multiple={true}
-                   ref={(ref) => ref ? setResizeableElement(ref) : null}>
+                   ref={(ref) => {
+                       if (ref) {
+                           setResizeableElement(ref);
+                       }
+                   }}>
         {
             range.map((a, i) => {
                 return <option
@@ -289,7 +309,7 @@ export function ParametersReact<TParams extends Params.IParamsExpandableReadonly
     onChange: (params: TParams) => void,  // при изменении значения
     onExpand?: (params: TParams) => void  // при развёртывании
 }) {
-    const params = useRef<(typeof data.params) | null>();
+    const params = useRef<(typeof data.params) | null>(null);
     const result = useMemo(() => {
         params.current = data.params
         return <ParametersBaseReact params={data.params} onChange={data.onChange} onExpand={data.onExpand} expandStatus={data.expandStatus} expandStatusLvl={data.expandStatusLvl}/>
