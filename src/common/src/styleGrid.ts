@@ -1,6 +1,32 @@
 import {CellClassParams} from "ag-grid-community";
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+import {
+    colorSchemeDarkBlue,
+    iconSetMaterial,
+    provideGlobalGridOptions,
+    themeAlpine
+} from "ag-grid-community";
+import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+
+
+
+// import 'ag-grid-community/styles/ag-grid.css';
+// import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+// Register all community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+export function GridStyleDefault(){
+    const theme = themeAlpine
+        .withPart(colorSchemeDarkBlue)
+        .withPart(iconSetMaterial)
+        .withParams({
+            'fontFamily': 'Roboto',
+            'fontSize': '12px',
+            'backgroundColor' :'rgb(24,27,33)'
+        });
+// Mark all grids as using legacy themes
+    provideGlobalGridOptions({ theme: theme});
+    return {theme, provideGlobalGridOptions};
+}
 
 export const StyleGridDefault = {
     //    'color':'#1d262c',

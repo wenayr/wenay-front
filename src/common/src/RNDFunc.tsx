@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Rnd} from "react-rnd";
 import {renderBy, updateBy} from "../updateBy";
+import {DivRndBase3} from "./RNDFunc3";
 
 type tPosition = {x: number, y: number}
 type tSize = {height: number | string, width: number | string}
@@ -33,10 +34,17 @@ let k = 0
 const openWindows: {ar: {k: number}[]} = {ar: []}
 
 export const DivRnd2: typeof DivRndBase2 = (a) => {
-    const Base = ({update}: {update: number}) => typeof a.children == "function" ? a.children(update) : a.children
-    const ff = (update: number) => useMemo(() => <Base update={update}/>, [update])
+    // const Base = ({ update }: { update: number }) => {
+    //     console.log(update)
+    //     return typeof a.children === "function" ? a.children(update) : a.children;
+    // }
+    const Base2 = ({ update }: { update: number }) => {
+        return typeof a.children === "function" ? a.children(update) : a.children;
+    }
+    // const ff = (update: number) => useMemo(() => <Base update={update} />, [update]);
+    const ff = (update: number) => useMemo(() => <Base2 update={update} />, [typeof a.children === "function"  ? update : true]);
 
-    return DivRndBase2({...a, children: ff})
+    return DivRndBase2({ ...a, children: ff });
 }
 
 export const DivRnd = DivRnd2

@@ -1,9 +1,8 @@
 import {createRoot} from "react-dom/client";
+import {TestMain} from "./common/testUseReact/use";
 
 export function Test() {
-    return <div>123
-
-    </div>
+    return <TestMain/>
 }
 function GeneralInit(pare:HTMLElement){
     const root = createRoot(pare!); // createRoot(container!) if you use TypeScript

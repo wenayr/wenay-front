@@ -38,9 +38,15 @@ let k = 0;
 const openWindows: { ar: { k: number }[] } = { ar: [] };
 
 export const DivRnd3: typeof DivRndBase3 = (a) => {
-    const Base = ({ update }: { update: number }) =>
-        typeof a.children === "function" ? a.children(update) : a.children;
-    const ff = (update: number) => useMemo(() => <Base update={update} />, [update]);
+    // const Base = ({ update }: { update: number }) => {
+    //     console.log(update)
+    //     return typeof a.children === "function" ? a.children(update) : a.children;
+    // }
+    const Base2 = ({ update }: { update: number }) => {
+        return typeof a.children === "function" ? a.children(update) : a.children;
+    }
+    // const ff = (update: number) => useMemo(() => <Base update={update} />, [update]);
+    const ff = (update: number) => useMemo(() => <Base2 update={update} />, [typeof a.children === "function"  ? update : true]);
 
     return DivRndBase3({ ...a, children: ff });
 };
