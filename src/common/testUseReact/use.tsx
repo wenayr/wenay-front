@@ -1,8 +1,8 @@
-import {Button, DivRnd, DivRnd3, mouseMenuApi, renderBy} from "../api";
+import {Button, DivRnd, DivRnd3, mouseMenuApi, renderBy, updateBy} from "../api";
 import {GridExample, tt} from "./useGrid";
 
 
-
+const a = {}
 export function TestMain() {
     return <div className={"maxSize"}>
         <ExampleUsage/>
@@ -11,13 +11,24 @@ export function TestMain() {
                 renderBy(tt)
             }}
         >menu</div>
+        <div className={"msTradeAlt"}
+            onClick={()=>{
+                renderBy(a)
+            }}
+        >update</div>
         <mouseMenuApi.ReactMouse>
             <GridExample/>
         </mouseMenuApi.ReactMouse>
     </div>
 }
 
-
+const Container = () => {
+    console.log(Date.now())
+    updateBy(a)
+    return <div className={"maxSize"}>
+        <GridExample/>
+    </div>
+}
 const ExampleUsage = () => {
     return <Button button={e => <div className={!e ? "msTradeAlt" : "msTradeAlt msTradeActive"}>menu</div>}>
         {(api) => {
@@ -32,7 +43,7 @@ const ExampleUsage = () => {
                                // setUpdate(update + 1)
                            }}>
                 <div className={"maxSize"}>
-                    <GridExample/>
+                    <Container/>
                 </div>
                 {/*<MenuSeries update={update} key={"2323"}/>*/}
             </DivRnd3>
