@@ -1,6 +1,8 @@
 import {createRoot} from "react-dom/client";
 import {TestMain} from "./common/testUseReact/use";
+import {GridStyleDefault} from "./common/src/styleGrid";
 
+GridStyleDefault()
 export function Test() {
     return <TestMain/>
 }

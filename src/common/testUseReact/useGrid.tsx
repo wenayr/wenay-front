@@ -18,18 +18,18 @@ import {mouseMenuApi} from "../src/menu/menuMouse";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-// Register all community features
-ModuleRegistry.registerModules([AllCommunityModule]);
-const theme = themeAlpine
-    .withPart(colorSchemeDarkBlue)
-    .withPart(iconSetMaterial)
-    .withParams({
-        'fontFamily': 'Roboto',
-        'fontSize': '12px',
-        'backgroundColor' :'rgb(24,27,33)'
-    });
-// Mark all grids as using legacy themes
-provideGlobalGridOptions({ theme: theme});
+// // Register all community features
+// ModuleRegistry.registerModules([AllCommunityModule]);
+// const theme = themeAlpine
+//     .withPart(colorSchemeDarkBlue)
+//     .withPart(iconSetMaterial)
+//     .withParams({
+//         'fontFamily': 'Roboto',
+//         'fontSize': '12px',
+//         'backgroundColor' :'rgb(24,27,33)'
+//     });
+// // Mark all grids as using legacy themes
+// provideGlobalGridOptions({ theme: theme});
 
 
 // Row Data Interface

@@ -20,8 +20,11 @@ export function GridStyleDefault(){
         .withPart(iconSetMaterial)
         .withParams({
             'fontFamily': 'Roboto',
-            'fontSize': '12px',
-            'backgroundColor' :'rgb(24,27,33)'
+            'textColor': 'rgba(214,214,214,0.9)',
+            'tabTextColor': 'rgba(227,227,227,0.9)',
+            'fontSize': '10px',
+            'spacing': '3px',
+            'backgroundColor' :'rgb(19,24,33)'
         });
 // Mark all grids as using legacy themes
     provideGlobalGridOptions({ theme: theme});
