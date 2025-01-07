@@ -3,7 +3,9 @@ import {GridExample, tt} from "./useGrid";
 
 
 const a = {}
+const b = {}
 export function TestMain() {
+    updateBy(b)
     return <div className={"maxSize"}>
         <ExampleUsage/>
         <div className={"msTradeAlt"}

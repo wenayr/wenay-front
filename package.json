@@ -1,6 +1,6 @@
 {
   "name": "wenay-react",
-  "version": "0.0.65",
+  "version": "0.0.66",
   "description": "Common react",
   "strict": true,
   "main": "dist/index.js",
@@ -26,8 +26,8 @@
   "author": "wenay",
   "license": "ISC",
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "peerDependenciesMeta": {
     "react-dom": {
