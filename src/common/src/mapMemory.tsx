@@ -1,5 +1,5 @@
 import {mapResiReact} from "./Resizeble";
-import {ExRNDMap} from "./RNDFunc";
+import {ExRNDMap3} from "./RNDFunc3";
 import {CashFuncMapCash} from "./cash";
 import { deepClone } from "wenay-common";
 
@@ -67,13 +67,13 @@ export function staticGetById<T extends object>(key: any, def: T, id: string|num
 export const Cash = CashFuncMapCash(
     [
         ["mapResiReact", mapResiReact],
-        ["ExRNDMap", ExRNDMap],
+        ["ExRNDMap3", ExRNDMap3],
         ["staticProps", staticProps]
     ]
 )
 
 export const MemoryMap = {
-    rnd: ExRNDMap,
+    rnd: ExRNDMap3,
     resize: mapResiReact,
     other: staticProps
 }

@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {DivRnd} from "./RNDFunc";
+import {DivRnd3} from "./RNDFunc3";
 import {DivOutsideClick, useOutside} from "./commonFuncReact";
 
 export function InputPage({callback, name = "", txt =""}: {callback: (txt: string)=>void, name?: string, txt?: string}) {
@@ -17,26 +17,26 @@ export function InputPage({callback, name = "", txt =""}: {callback: (txt: strin
 
 export function InputPageModal({callback, name, outClick, keyForSave = "InputPage2", txt}: Parameters<typeof InputPage>[0] & {outClick: ()=>any, keyForSave?: string}) {
     return <DivOutsideClick outsideClick={outClick} style={{position: "absolute", top: "50%", left: "50%"}}>
-        <DivRnd keyForSave={keyForSave}
+        <DivRnd3 keyForSave={keyForSave}
                 size={{height: 150, width: 300}}
                 position={{y: -150, x: -250}}
                 className={"fon border fonLight"}
                 moveOnlyHeader={true}>
             {InputPage({callback, name, txt})}
-        </DivRnd>
+        </DivRnd3>
     </DivOutsideClick>
 }
 export function InputFileModal({callback, name, outClick, keyForSave = "InputFile2"}: Parameters<typeof InputFile>[0] & {outClick: ()=>any, keyForSave?: string}) {
     const ref = useRef<HTMLDivElement>(null);
     useOutside({ref, outsideClick: outClick});
     return <div ref={ref} style={{position: "absolute", top: "50%", left: "50%"}}>
-        <DivRnd keyForSave={keyForSave}
+        <DivRnd3 keyForSave={keyForSave}
                 size={{height: 150, width: 300}}
                 position={{y: -150, x: -250}}
                 className={"fon border fonLight"}
                 moveOnlyHeader={true}>
             {InputFile({callback, name})}
-        </DivRnd>
+        </DivRnd3>
     </div>
 }
 export function InputFile({callback, name = ""}: {callback: (file: File | null)=>void, name?: string}) {
@@ -53,13 +53,13 @@ export function PageModalFree({outClick, children, zIndex, size = {height: 150, 
     const ref = useRef<HTMLDivElement>(null);
     useOutside({ref, outsideClick: outClick});
     return <div ref={ref} style={{position: "absolute", top: "50%", left: "50%"}}>
-        <DivRnd keyForSave={keyForSave}
+        <DivRnd3 keyForSave={keyForSave}
                 size={size}
                 zIndex={zIndex}
                 position={{y: -(size.height/2), x: -(size.width/2)}}
                 className={"fon border fonLight"}
                 moveOnlyHeader={true}>
             {children}
-        </DivRnd>
+        </DivRnd3>
     </div>
 }

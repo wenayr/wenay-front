@@ -20,7 +20,7 @@ export * from "./src/Parameters2";
 export * from "./src/arrayPromise";
 
 export * from "./src/Resizeble";
-export * from "./src/RNDFunc";
+// export * from "./src/RNDFunc";
 export * from "./src/RNDFunc3";
 export * from "./src/styleGrid";
 export * from "./src/modal";

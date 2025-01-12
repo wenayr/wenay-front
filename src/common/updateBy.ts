@@ -2,8 +2,8 @@ import {useLayoutEffect, useState} from "react";
 import {waitRun} from "wenay-common";
 
 type tFunc2 = Map<object, (a?: any) => void>
-const map3 = new WeakMap<object, tFunc2>();
-const mapWait = new Map<object, ReturnType<typeof waitRun>>();
+export const map3 = new WeakMap<object, tFunc2>();
+export const mapWait = new Map<object, ReturnType<typeof waitRun>>();
 
 
 export function renderBy(a: object, ms?: number) {

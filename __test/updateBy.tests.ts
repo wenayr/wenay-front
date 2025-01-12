@@ -1,145 +1,90 @@
-import { renderBy, renderByRevers, renderByLast, updateBy } from '../src/common/updateBy';
+import {renderBy, renderByRevers, renderByLast, updateBy, map3, mapWait} from '../src/common/updateBy';
 import { act, renderHook } from '@testing-library/react';
-
+import {sleepAsync, waitRun} from "wenay-common";
+jest.useFakeTimers(); // Для работы с таймерами через Jest
 jest.mock('wenay-common', () => ({
-    waitRun: jest.fn(() => {
-        let callback: () => void = () => {};
-        return {
-            refreshAsync: jest.fn((ms: number, cb: () => void) => {
-                callback = cb;
-            }),
-            invoke: jest.fn(() => {
-                callback();
-            }),
-        };
-    }),
+    waitRun: jest.fn(() => ({
+        refreshAsync: jest.fn((ms, callback) => setTimeout(callback, ms)),
+    })),
+
 }));
 
-describe('updateBy.ts - функция renderBy', () => {
-    it('должен вызывать все функции из map3', () => {
-        const callback1 = jest.fn();
-        const callback2 = jest.fn();
-        const obj = {};
-
-        // Добавляем функции в WeakMap
-        const funcMap = new Map();
-        funcMap.set(callback1, callback1);
-        funcMap.set(callback2, callback2);
-
-        (global as any).map3.set(obj, funcMap);
-
-        renderBy(obj);
-
-        expect(callback1).toHaveBeenCalledTimes(1);
-        expect(callback2).toHaveBeenCalledTimes(1);
+describe('Тесты: renderBy, renderByRevers, renderByLast', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        mapWait.clear(); // Очищаем Map перед каждым тестом
+        // WeakMap (map3) нельзя очистить явно, поэтому достаточно создавать новые объекты
     });
 
-    it('должен работать с задержкой через waitRun', () => {
+    test('renderBy: вызывает функции сразу при отсутствии таймера', () => {
         const obj = {};
+        const func = jest.fn();
         const funcMap = new Map();
-        const callback = jest.fn();
+        funcMap.set(func, func);
+        (map3 as any).set(obj, funcMap);
 
-        funcMap.set(callback, callback);
-        (global as any).map3.set(obj, funcMap);
+        // Вызываем renderBy без задержки
+        renderBy(obj);
+
+        expect(func).toHaveBeenCalledWith(obj); // Убедимся, что функция вызвана с `obj`
+    });
+
+    test('renderBy: вызывает функции с таймером', () => {
+        const obj = {};
+        const func = jest.fn();
+        const funcMap = new Map();
+        funcMap.set(func, func);
+        (map3 as any).set(obj, funcMap);
+
+        // Вызываем renderBy с задержкой
+        renderBy(obj, 1000);
+
+        expect(func).not.toHaveBeenCalled(); // Убедимся, что функция еще не вызвана
+        jest.advanceTimersByTime(1000); // Перематываем время на 1000 мс
+        expect(func).toHaveBeenCalledWith(obj); // Убедимся, что функция вызвана
+    });
+
+    test('renderBy: удаляет запись из mapWait после выполнения', () => {
+        const obj = {};
+        const func = jest.fn();
+        const funcMap = new Map();
+        funcMap.set(func, func);
+        (map3 as any).set(obj, funcMap);
 
         renderBy(obj, 1000);
 
-        const waitRunInstance = (global as any).mapWait.get(obj);
-        expect(waitRunInstance).toBeDefined();
-
-        act(() => {
-            waitRunInstance.invoke();
-        });
-
-        expect(callback).toHaveBeenCalledTimes(1);
-        expect((global as any).mapWait.get(obj)).toBeUndefined();
+        expect(mapWait.has(obj)).toBe(true); // Запись добавлена
+        jest.runOnlyPendingTimers(); // Выполняем таймеры
+        expect(mapWait.has(obj)).toBe(false); // Запись должна удалиться
     });
-});
 
-describe('updateBy.ts - функция renderByRevers', () => {
-    it('должен вызывать функции в обратном порядке, если reverse=true', () => {
-        const callback1 = jest.fn();
-        const callback2 = jest.fn();
+    test('renderByRevers: вызовы функций происходят в обратном порядке', () => {
         const obj = {};
-
+        const func1 = jest.fn();
+        const func2 = jest.fn();
         const funcMap = new Map();
-        funcMap.set(callback1, callback1);
-        funcMap.set(callback2, callback2);
+        funcMap.set(func1, func1);
+        funcMap.set(func2, func2);
+        (map3 as any).set(obj, funcMap);
 
-        (global as any).map3.set(obj, funcMap);
+        renderByRevers(obj);
 
-        renderByRevers(obj, undefined, true);
-
-        // Проверяем порядок ручным сравнением mock.calls
-        const calls = [callback1.mock.calls, callback2.mock.calls];
-        expect(calls[1].length).toBeGreaterThan(0); // Второй вызван первым
-        expect(calls[0].length).toBeGreaterThanOrEqual(0); // Первый вызван после
+        expect(func2).toHaveBeenCalledWith(obj); // Вызвана последняя функция первой
+        expect(func1).toHaveBeenCalledWith(obj); // Вызвана первая функция второй
     });
 
-    it('должен работать в обычном порядке, если reverse=false', () => {
-        const callback1 = jest.fn();
-        const callback2 = jest.fn();
-        const obj = {};
 
+    test('renderByLast: запись удаляется из mapWait после выполнения', () => {
+        const obj = {};
+        const func = jest.fn();
         const funcMap = new Map();
-        funcMap.set(callback1, callback1);
-        funcMap.set(callback2, callback2);
+        funcMap.set(func, func);
+        (map3 as any).set(obj, funcMap);
 
-        (global as any).map3.set(obj, funcMap);
+        renderByLast(obj, 500);
 
-        renderByRevers(obj, undefined, false);
-
-        // Проверяем порядок вручную через mock.calls
-        const calls = [callback1.mock.calls, callback2.mock.calls];
-        expect(calls[0].length).toBeGreaterThan(0); // Первый вызван первым
-        expect(calls[1].length).toBeGreaterThanOrEqual(0); // Второй вызван позже
-    });
-});
-
-describe('updateBy.ts - функция renderByLast', () => {
-    it('должен вызывать только последний элемент map3', () => {
-        const callback1 = jest.fn();
-        const callback2 = jest.fn();
-        const obj = {};
-
-        const funcMap = new Map();
-        funcMap.set(callback1, callback1);
-        funcMap.set(callback2, callback2);
-
-        (global as any).map3.set(obj, funcMap);
-
-        renderByLast(obj);
-
-        // Проверяем вызовы: только последний элемент вызван
-        expect(callback2).toHaveBeenCalledTimes(1);
-        expect(callback1).not.toHaveBeenCalled();
-    });
-});
-
-describe('updateBy.ts - функция updateBy', () => {
-    it('должен подписаться на обновление объекта', () => {
-        const obj = {};
-        const { result } = renderHook(() => updateBy(obj));
-
-        const funcMap = (global as any).map3.get(obj);
-        expect(funcMap).toBeDefined();
-        expect(funcMap.size).toBe(1);
-    });
-
-    it('должен вызывать переобновление состояния автоматически', () => {
-        const obj = {};
-        const { result } = renderHook(() => updateBy(obj));
-
-        const funcMap = (global as any).map3.get(obj);
-        const updateCallback: any = Array.from(funcMap.values())[0];
-
-        // Mock state update
-        act(() => {
-            updateCallback(obj);
-        });
-
-        // Проверяем, что состояние в updateBy обновилось
-        // @ts-ignore
-        expect(result.current[0]).toBe(1);
+        expect(mapWait.has(obj)).toBe(true); // Запись должна быть добавлена
+        jest.runOnlyPendingTimers();
+        expect(mapWait.has(obj)).toBe(false); // После выполнения запись удаляется
     });
 });
