@@ -4,27 +4,50 @@ const optionsDef = {
     update: true,
     add: true
 }
-export function applyTransactionAsyncUpdate<T>(grid: GridReadyEvent<T, any> | null | undefined, newData: (Partial<T>)[], getId: (...a: any[]) => string, bufTable:{[id: string]: Partial<T>}, option?: options) {
-    const op = {...(option??{}), ...optionsDef}
+export function applyTransactionAsyncUpdate<T>(
+    grid: GridReadyEvent<T, any> | null | undefined,
+    newData: (Partial<T>)[],
+    getId: (...a: any[]) => string,
+    bufTable: { [id: string]: Partial<T> },
+    option?: options
+) {
+    // Установка параметров (объединение переданных опций с настройками по умолчанию)
+    const op = {...optionsDef, ...(option ?? {})};
+
+    // Проверка наличия сетки и доступа к данным через API
     if (grid?.api.getRowNode) {
-        const arrNew: T[]  = []
+        const arrNew: T[] = []; // Массив для новых данных (добавляемые строки)
+
+        // Основная обработка данных (map используется для обновления или создания записей)
         const arr = newData.map(e => {
-            const id = getId(e)//dataTable
-            const a = grid.api.getRowNode(id)?.data
+            // Получение ID для текущей строки
+            const id = getId(e);
+
+            // Попытка найти существующую строку по ID
+            const a = grid.api.getRowNode(id)?.data;
+
             if (!a) {
-                arrNew.push(bufTable[id] = {...(bufTable[id]??{}), ...e} as T)
-                return null
+                // Если строка не найдена - добавить в массив для добавления
+                arrNew.push(bufTable[id] = { ...(bufTable[id] ?? {}), ...e } as T);
+                return null; // Новая строка обрабатывается отдельно
             }
-            return bufTable[id] = {...a , ...(bufTable[id]??{}), ...e} as T
-        }).filter(e => e) as T[]
+
+            // Если строка найдена - обновить данные в буфере
+            return (bufTable[id] = { ...a, ...(bufTable[id] ?? {}), ...e } as T);
+        }) // Убираем `null` и оставляем только существующие строки
+            .filter(e => e) as T[];
+
+        // Добавление новых строк (если есть элементы)
         if (arrNew.length && op.update) {
-            // console.log(arrNew.length);
-            grid.api.applyTransaction({add: arrNew})
+            grid.api.applyTransactionAsync({ add: arrNew });
         }
-        if (arr.length && op.add) grid.api.applyTransactionAsync({update: arr})
+
+        // Асинхронное обновление существующих строк
+        if (arr.length && op.add) {
+            grid.api.applyTransactionAsync({ update: arr });
+        }
     }
 }
-
 
 type UnUndefined<T extends (any | undefined)> = T extends undefined ? never : T
 type t1<T = any> = ColDef<T>["comparator"]
@@ -32,8 +55,17 @@ type paramsCompare<TData = any> = Parameters<UnUndefined<t1>>
 
 export function getComparatorGrid<T = any>(func?: (...param: paramsCompare<T>) => [a: number, b: number]): t1 {
     return (...param) => {
-        const [a1, b1, modeA, modeB, inv] = param
-        const [a, b] = func ? func(...param) : [a1, b1]
-        return ((typeof a == "number" && !Number.isNaN(a)) && (typeof b == "number" && !Number.isNaN(b))) ? a - b : a == b ? 0 : (!Number.isNaN(b) && b != undefined) ? (inv ? -1 : 1) : (inv ? 1 : -1)
+        const [a1, b1, modeA, modeB, inv] = param; // Распаковка параметров в функцию
+        const [a, b] = func ? func(...param) : [a1, b1]; // Использование преобразующей функции func, если передана
+        return (
+            (typeof a == "number" && !Number.isNaN(a)) &&
+            (typeof b == "number" && !Number.isNaN(b))
+        ) // Если оба a и b - валидные числа
+            ? a - b // Разница между числами
+            : a == b
+                ? 0 // Если значения равны, возвращаем 0
+                : (!Number.isNaN(b) && b != undefined)
+                    ? (inv ? -1 : 1) // Если b существует: порядок определяется inv
+                    : (inv ? 1 : -1); // Если b отсутствует: порядок определяется inv
     }
 }
