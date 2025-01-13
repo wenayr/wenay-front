@@ -39,7 +39,7 @@ export function applyTransactionAsyncUpdate<T>(
 
         // Добавление новых строк (если есть элементы)
         if (arrNew.length && op.update) {
-            grid.api.applyTransactionAsync({ add: arrNew });
+            grid.api.applyTransaction({ add: arrNew });
         }
 
         // Асинхронное обновление существующих строк
