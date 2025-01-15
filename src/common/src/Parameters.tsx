@@ -36,10 +36,11 @@ export function CParameter(props: {
         <div
             className="toLine LeftMenuParameters toIndicatorMenuButton"
             style={{position: "relative"}}
-            onMouseEnter={() => setHovered(true)} // Показываем комментарий
-            onMouseLeave={() => setHovered(false)} // Скрываем комментарий
         >
-            <div className="toLine" style={{width: "auto", ...props.style}}>
+            <div className="toLine" style={{width: "auto", ...props.style}}
+                 onMouseEnter={() => setHovered(true)} // Показываем комментарий
+                 onMouseLeave={() => setHovered(false)} // Скрываем комментарий
+            >
                 {props.name}
             </div>
             <div className="toLine toRight" style={props.enabled === false ? {opacity: 0.5} : {}}>
