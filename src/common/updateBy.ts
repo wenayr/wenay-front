@@ -49,7 +49,7 @@ export function updateBy<T extends object>(
     a: T,
     f?: React.Dispatch<React.SetStateAction<T>> | ((a: T) => void)
 ) {
-    const [counter, setCounter] = useState(0); // Состояние счётчика для обновлений
+    const [_, setCounter] = useState(0); // Состояние счётчика для обновлений
 
     // Эффект для работы с объектом и картой
     useLayoutEffect(() => {

@@ -324,8 +324,8 @@ function ParametersBaseReact<TParams extends Params.IParamsExpandableReadonly = 
     onChange: (params: TParams) => void,  // при изменении значения
     onExpand?: (params: TParams) => void  // при развёртывании
 }) {
-    const [update, setUpdate] = useState(0)
-    function Refresh() {setUpdate(update+1)}
+    const [_, setUpdate] = useState(0)
+    function Refresh() {setUpdate(e=>++e)}
     const styleColorDisable = "rgb(146,146,146)";
     const p = useMemo(() => deepCloneMutable(data.params), [data.params]);
     const myParams = useRef(p);

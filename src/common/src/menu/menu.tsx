@@ -137,8 +137,8 @@ export function MenuBase({
     className?: (active?: boolean) => string,
     coordinate?: {x: number, y: number, toLeft?: boolean, left?: number},
 }) {
-    const _a = useState(false)
-    const update = () => _a[1](!_a[0])
+    const [_, setUpdate] = useState(false)
+    const update = () => setUpdate(e=>!e)
     const ref = useRef<HTMLElement | null>(null);
     const [top, setTop] = useState(coordinate.y)
     const [left, setLeft] = useState(coordinate.x)
