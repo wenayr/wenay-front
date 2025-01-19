@@ -4,16 +4,20 @@ import {ChartDemo} from "../src/myChart/1/myChartTest";
 import {MyChartEngine} from "../src/myChart/chartEngine/chartEngineReact";
 import {MegaWebGLChart} from "../src/myChart/3d/3d";
 import {TestParams} from "./testParams";
+import {createContext, Suspense, use, useContext, useEffect, useMemo, useState} from "react";
+import {sleepAsync} from "wenay-common";
 
 
 const a = {}
 const b = {}
 export function TestMain() {
-    updateBy(b)
+    console.log(1111111)
+    // updateBy(b)
     return <div className={"maxSize"}>
         <ExampleUsage/>
         <ButtonChart/>
         <ButtonChart3d/>
+        <App/>
         <ButtonParams/>
         <div className={"msTradeAlt"}
             onClick={()=>{
@@ -122,3 +126,85 @@ const ButtonParams = () => {
         }}
     </Button>
 };
+const UseTest2 = () => {
+    return <Suspense fallback={<div>7777</div>}>
+        <UseTest/>
+    </Suspense>
+}
+const FFF = () => {
+    return sleepAsync(500).then(()=>123)
+}
+const UseTest = () => {
+    console.log("1233333")
+    const r = use(FFF())
+    console.log("!!!!!!")
+    return <div>{r}</div>
+}
+
+// Функция имитирует асинхронный процесс (например, получение данных с сервера)
+const fetchData = async (): Promise<string> => {
+    console.log("!444")
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            console.log("!111")
+            resolve("Данные успешно загружены!")
+        }, 2000); // Задержка 2 секунды
+    });
+};
+
+// Компонент, использующий хук use для ожидания асинхронной операции
+const FetchExample = () => {
+    // Важно: хук use может быть вызван только на верхнем уровне компонента,
+    // он возвращает результат асинхронной функции.
+    const data = use(fetchData());
+
+    // React "подвешивает" компонент, пока Promises (переданные в use) не будут разрешены.
+    return <div>{data}</div>;
+};
+const FetchExample2 = () => {
+    console.log("dsdsds")
+    // Важно: хук use может быть вызван только на верхнем уровне компонента,
+    // он возвращает результат асинхронной функции.
+    return useMemo(()=><FetchExample/>,[])
+};
+
+const Ztr = createContext({a: 4 as number},)
+// Главный компонент приложения
+const Ttt2 = () => {
+    console.log("Rrrrrrrrrrr")
+    return useMemo(()=><Ttt3/>,[true])
+
+}
+const Ttt3 = () => {
+    console.log("444444444444444444")
+    return <Ttt/>
+
+}
+const Ttt = () => {
+    const data = useContext(Ztr)
+    console.log(data)
+    return <div>{data.a}</div>
+
+}
+
+export const App = () => {
+    const [a, setA] = useState(0)
+    useEffect(()=>{
+        sleepAsync(1000)
+            .then(()=>{
+
+                setA(e=>e+1)
+            })
+    }, [])
+    console.log("FFFFFFFFFFFFFFFFFFF")
+    return <div>
+        <Ztr value={{a: a}}>
+            {useMemo(()=><Ttt3 key = {1}/>,[true])}
+        </Ztr>
+        <Ttt3 key = {2}/>
+
+        <Ttt3 key = {1}/>
+    </div>
+};
+
+

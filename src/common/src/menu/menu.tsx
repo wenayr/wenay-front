@@ -1,208 +1,296 @@
 import React, {ReactElement, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {PromiseArrayListen, sleepAsync} from "wenay-common";
 
-export type tMenuReactStrictly<T extends any = any> = {
-    name: string | ((a?: T) => string),
-    getStatus?: () => T,
-    onClick?: (e: any) => void | undefined | null | ((void | undefined | null | Promise<any> | (() => Promise<any>))[]) | Promise<any>,
-    active?: () => boolean,
-    status?: boolean,
-    next?: () => (tMenuReact<any> | false)[],
-    func?: () => ReactElement,
-    onFocus?: () => tMenuReact<any>[],
-    menuElement?: typeof MenuElement
-}
-export type tMenuReact<T extends any = any> = tMenuReactStrictly<T> | false | null | undefined
-type tt = {ok?: number, error?: number, count?: number}
+/*******************************************************
+ * Типы данных для меню
+ *******************************************************/
+export type tMenuReactStrictly<T = any> = {
+    name: string | ((status?: T) => string);
+    getStatus?: (() => T) | null;
+    onClick?: ((e: any) => void | undefined | null | ((void | undefined | null | Promise<any> | (() => Promise<any>))[]) | Promise<any>) | null,
+    active?: (() => boolean) | null;
+    status?: boolean;
+    next?: (() => (tMenuReact<any> | false)[]) | null;
+    func?: (() => React.ReactElement) | null;
+    onFocus?: (() => tMenuReact<any>[]) | null;
+    menuElement?: typeof MenuElement;
+};
 
-function TimeNum({data}: {data: tt}) {
-    const r = useRef(0);
-    const [a, setA] = useState(r.current)
-    r.current = a
-    const getStr = () => {
-        if (!data.ok && !data.error) return a
-        const t1 = data.ok ? "ok " + data.ok : ""
-        const t2 = data.error ? " er " + (data.error > 1 ? " " + data.error : "") : ""
-        const t3 = data.count ? "/" + data.count : ""
-        return t1 + t3 + t2
-    }
+export type tMenuReact<T = any> = tMenuReactStrictly<T> | false | null | undefined;
+
+/*******************************************************
+ * Вспомогательный тип
+ *******************************************************/
+type tCounters = { ok?: number; error?: number; count?: number };
+
+/*******************************************************
+ * Отображает счётчик/прогресс (анимация, кол-во ok/error)
+ *******************************************************/
+function TimeNum({ data }: { data: tCounters }) {
+    const refCounter = useRef(0);
+    const [count, setCount] = useState(refCounter.current);
+    refCounter.current = count;
+
+    const formatLabel = () => {
+        if (!data.ok && !data.error) return count;
+        const txtOk = data.ok ? "ok " + data.ok : "";
+        const txtEr = data.error ? " er " + (data.error > 1 ? data.error : "") : "";
+        const txtCount = data.count ? "/" + data.count : "";
+        return txtOk + txtCount + txtEr;
+    };
+
     useEffect(() => {
-        let z = 0
-        const t = setInterval(() => setA(++z), 30)
-        return () => {if (t) clearInterval(t as any)}
-    }, [true, setA])
-    return <div
-        style={{
-            float: "right",
-            opacity: a < 45 ? a / 45 : 1,
-            width: a < 25 ? a * 3 : 25 * 3,
-            textAlign: "right"
-        }}>
-        {
-            getStr()
-        }
-    </div>
-}
+        let local = 0;
+        const timer = setInterval(() => setCount(++local), 30);
+        return () => clearInterval(timer);
+    }, []);
 
-function MenuElement({data: e, toLeft, className, update}: {
-    className?: (active?: boolean) => string,
-    toLeft: boolean,
-    data: Pick<tMenuReactStrictly, "onClick" | "active" | "name" | "getStatus">
-    update: () => void
-}) {
-    const listenOk = useRef<null|(()=>any)>(null);
-    const listenError = useRef<null|(()=>any)>(null);
-    useEffect(() => {
-        return () => {
-            listenOk.current?.()
-            listenError.current?.()
-            listenOk.current = null
-            listenError.current = null
-        }
-    }, [true]);
-
-    const [num, setNum] = useState<tt | null>(null)
-    return <div className={className?.(e.active?.()) ?? "MenuR " + (e.active?.() ? "toButtonA" : "toButton")}
-                style={{
-                    float: toLeft ? "left" : "right"
-                }}
-                onClick={() => {
-                    if (e.onClick) {
-                        const t = e.onClick?.(e);
-
-                        if (t) {
-                            if (Array.isArray(t)) {
-                                const t4 = t.filter(e => e) as (Promise<any> | (() => Promise<any>))[]
-                                const t2 = PromiseArrayListen(t4)
-                                setNum({})
-                                listenError.current?.()
-                                listenOk.current?.()
-                                listenOk.current = t2.listenOk((data: any, i: number, countOk: number, countError: number, count: number) => {
-                                    setNum({ok: countOk, error: countError, count})
-                                })
-                                listenError.current = t2.listenError((error: any, i: number, countOk: number, countError: number, count: number) => {
-                                    setNum({ok: countOk, error: countError, count})
-                                })
-                            }
-                            else if (t instanceof Promise) {
-                                // Promise.allSettled()
-                                setNum({})
-                                t
-                                    .then(async e => {
-                                        if (Array.isArray(e) && e.length) {
-                                            if (e[0]?.status == "fulfilled" || e[0]?.status == "rejected") {
-                                                const tr = {ok: 0, error: 0} satisfies tt;
-                                                e.forEach(e => {
-                                                    if (e[0]?.status == "fulfilled") {
-                                                        tr.ok++
-                                                    }
-                                                    if (e[0]?.status == "rejected") {
-                                                        tr.error++
-                                                    }
-                                                })
-                                            }
-                                        } else {
-                                            setNum({ok: 1})
-                                            await sleepAsync(0)
-                                        }
-                                    })
-                                    .finally(async() => {
-                                        await sleepAsync(500)
-                                        setNum(null)
-                                    })
-                            } else update();
-                        } else update();
-                    }
-                }}
-    >
-        <div className={"toLine"}>
-            {typeof e.name == "string" ? e.name : e.name(e.getStatus?.())}
-            {num && <TimeNum data={num}/>}
+    return (
+        <div
+            style={{
+                float: "right",
+                opacity: count < 45 ? count / 45 : 1,
+                width: count < 25 ? count * 3 : 75,
+                textAlign: "right"
+            }}
+        >
+            {formatLabel()}
         </div>
-    </div>
+    );
 }
 
-export function MenuBase({
-                               coordinate = {x: 0, y: 0, toLeft: false, left: 0},
-                               data,
-                               zIndex,
-                               menu,
-                               className,
-                               menuElement
-                           }: {
-    menu?: (a: tMenuReactStrictly[]) => ReactElement,
-    menuElement?: (a: tMenuReactStrictly) => ReactElement,
-    data: tMenuReactStrictly[],
-    zIndex?: number,
-    className?: (active?: boolean) => string,
-    coordinate?: {x: number, y: number, toLeft?: boolean, left?: number},
+/*******************************************************
+ * Основной элемент меню (пункт с onClick, счётчиками и т.д.)
+ *******************************************************/
+function MenuElement({
+                         data: item,
+                         toLeft,
+                         className,
+                         update
+                     }: {
+    data: Pick<tMenuReactStrictly, "onClick" | "active" | "name" | "getStatus">;
+    toLeft: boolean;
+    className?: (active?: boolean) => string;
+    update: () => void;
 }) {
-    const [_, setUpdate] = useState(false)
-    const update = () => setUpdate(e=>!e)
-    const ref = useRef<HTMLElement | null>(null);
-    const [top, setTop] = useState(coordinate.y)
-    const [left, setLeft] = useState(coordinate.x)
-    const [width, setWidth] = useState(0)
-    const [toLeft, setToLeft] = useState(coordinate.toLeft ?? false)
-    const [x, setX] = useState(0)
+    const unsubOk = useRef<null | (() => any)>(null);
+    const unsubErr = useRef<null | (() => any)>(null);
+
+    useEffect(() => {
+        // При размонтировании отписываемся
+        return () => {
+            unsubOk.current?.();
+            unsubErr.current?.();
+            unsubOk.current = null;
+            unsubErr.current = null;
+        };
+    }, []);
+
+    const [progress, setProgress] = useState<tCounters | null>(null);
+
+    return (
+        <div
+            className={
+                className?.(item.active?.()) ||
+                "MenuR " + (item.active?.() ? "toButtonA" : "toButton")
+            }
+            style={{ float: toLeft ? "left" : "right" }}
+            onClick={() => {
+                if (!item.onClick) return;
+                const result = item?.onClick?.(item);
+                if (!result) {
+                    update();
+                    return;
+                }
+                // Если это массив "задач" (промисов или функций)
+                if (Array.isArray(result)) {
+                    const tasks = result.filter(Boolean) as (
+                        | Promise<any>
+                        | (() => Promise<any>)
+                        )[];
+                    const pa = PromiseArrayListen(tasks); // Допустим, внешняя функция
+                    setProgress({});
+                    unsubOk.current?.();
+                    unsubErr.current?.();
+                    unsubOk.current = pa.listenOk(
+                        (
+                            data: any,
+                            i: number,
+                            countOk: number,
+                            countError: number,
+                            count: number
+                        ) => setProgress({ ok: countOk, error: countError, count })
+                    );
+                    unsubErr.current = pa.listenError(
+                        (
+                            error: any,
+                            i: number,
+                            countOk: number,
+                            countError: number,
+                            count: number
+                        ) => setProgress({ ok: countOk, error: countError, count })
+                    );
+                }
+                // Если это один промис
+                else if (result instanceof Promise) {
+                    setProgress({});
+                    result
+                        .then(async (val) => {
+                            if (Array.isArray(val) && val.length) {
+                                // Если вернулся массив из Promise.allSettled
+                                // Считаем кол-во ok/error
+                                if (val[0]?.status === "fulfilled" || val[0]?.status === "rejected") {
+                                    const t = { ok: 0, error: 0 } as tCounters;
+                                    val.forEach((res: any) => {
+                                        if (res?.status === "fulfilled") t.ok!++;
+                                        if (res?.status === "rejected") t.error!++;
+                                    });
+                                    setProgress(t);
+                                }
+                            } else {
+                                setProgress({ ok: 1 });
+                                await sleepAsync(0);
+                            }
+                        })
+                        .finally(async () => {
+                            await sleepAsync(500);
+                            setProgress(null);
+                        });
+                } else {
+                    update();
+                }
+            }}
+        >
+            <div className="toLine">
+                {typeof item.name === "string"
+                    ? item.name
+                    : item.name(item.getStatus?.())}
+                {progress && <TimeNum data={progress} />}
+            </div>
+        </div>
+    );
+}
+
+export { TimeNum, MenuElement };
+
+
+type MenuBaseProps = {
+    menu?: (arr: tMenuReactStrictly[]) => ReactElement;
+    menuElement?: (item: tMenuReactStrictly) => ReactElement;
+    data: tMenuReactStrictly[];
+    zIndex?: number;
+    className?: (active?: boolean) => string;
+    coordinate?: {
+        x: number;
+        y: number;
+        toLeft?: boolean;
+        left?: number;
+    };
+};
+/**
+ * Компонент `MenuBase` отвечает за отрисовку всплывающего меню с поддержкой вложенных подменю и управления их состоянием.
+ *
+ * @param {Object} props - Пропсы компонента.
+ * @param {Object} [props.coordinate] - Координаты и параметры отображения меню.
+ * @param {number} props.coordinate.x - Координата X для размещения меню.
+ * @param {number} props.coordinate.y - Координата Y для размещения меню.
+ * @param {boolean} [props.coordinate.toLeft=false] - Указывает, должно ли меню быть смещено влево.
+ * @param {number} [props.coordinate.left=0] - Дополнительное смещение влево, если меню отображается с вложенными элементами.
+ * @param {tMenuReactStrictly[]} props.data - Массив объектов, описывающих элементы меню.
+ * @param {number} [props.zIndex] - Z-index меню для управления видимостью при перекрытии.
+ * @param {Function} [props.menu] - Функция, которая генерирует кастомный React элемент для отображения всего меню.
+ * @param {Function} [props.menuElement] - Функция, генерирующая кастомный React элемент для отображения отдельного элемента меню.
+ * @param {Function} [props.className] - Функция для задания CSS-классов для элементов меню.
+ *
+ * @returns {ReactElement} Визуальный элемент меню.
+ */
+export function MenuBase({
+                                coordinate = { x: 0, y: 0, toLeft: false, left: 0 },
+                                data,
+                                zIndex,
+                                menu,
+                                className,
+                                menuElement
+                            }: MenuBaseProps) {
+    const [_, forceUpdate] = useState(false);
+    const update = () => forceUpdate((p) => !p);
+    const refMenu = useRef<HTMLDivElement | null>(null);
+
+    const [top, setTop] = useState(coordinate.y);
+    const [leftPos, setLeftPos] = useState(coordinate.x);
+    const [menuWidth, setMenuWidth] = useState(0);
+    const [isLeftAligned, setIsLeftAligned] = useState(!!coordinate.toLeft);
+    const [xOffset, setXOffset] = useState(0);
+
     useLayoutEffect(() => {
-        const rect = ref.current!.getBoundingClientRect();
-        const w = window.innerWidth
-        const h = window.innerHeight
-        if (h - rect.bottom < 8) setTop(coordinate.y + (h - rect.bottom))
-        setLeft(rect.x)
-        setWidth(rect.width)
-        if ((!toLeft && w - rect.right < 8 && rect.width < (coordinate.left ?? 0))) {
-            setX(rect.x - (coordinate.left ?? 0))
-            if (!toLeft) setToLeft(true)
+        if (!refMenu.current) return;
+        const rect = refMenu.current.getBoundingClientRect();
+        const w = window.innerWidth, h = window.innerHeight;
+        if (h - rect.bottom < 8) setTop((prev) => prev + (h - rect.bottom));
+        setLeftPos(rect.x);
+        setMenuWidth(rect.width);
+        if (!coordinate.toLeft && w - rect.right < 8 && rect.width < (coordinate.left ?? 0)) {
+            setXOffset(rect.x - (coordinate.left ?? 0));
+            setIsLeftAligned(true);
         }
         if (coordinate.toLeft) {
-            setX((coordinate.left ?? 0) - rect.x - 4)
+            setXOffset((coordinate.left ?? 0) - rect.x - 4);
         }
-    }, [true])
-    const t: React.CSSProperties = toLeft ? {
-        display: "flex",
-        flexDirection: "column-reverse",
-        alignItems: "flex-end"
-    } : {}
-    return <div style={{
-        position: "absolute",
-        zIndex,
-        left: toLeft ? -1 * (width + 3 + (x ?? 0)) : coordinate.x,
-        top: top,
-        ...t
-    }}
-                ref={(e) => {if (e) ref.current = e}}
-    >
-        {menu ? menu(data) : data.map((e, i, max) => {
-            e.status ??= false
-            if (menuElement) return menuElement(e)
-            return <div key={i} className={"toLine"}
-                        onMouseEnter={() => {
-                            if (e.status) return;
-                            for (let j = 0; j < max.length; j++) {
-                                max[j].status = j == i
-                            }
-                            update();
-                        }}
-            >
-                {e.menuElement?.({toLeft, data: e, className, update}) ?? MenuElement({
-                    toLeft,
-                    data: e,
-                    className,
-                    update
-                })}
-                <div>
-                    {e.status && e.next && <div style={{position: "relative"}}><MenuBase
-                        data={e.next().filter(e => e) as tMenuReactStrictly<any>[]}
-                        coordinate={{x: 3, y: 0, toLeft, left}}/></div>}
-                    {e.status && e.func && <div style={{position: "relative"}}><MenuBase
-                        menu={e.func}
-                        data={[] as typeof data}
-                        coordinate={{x: 3, y: 0, toLeft, left}}/></div>}
-                </div>
-            </div>
-        })}
-    </div>
-}
+    }, [coordinate.x, coordinate.y, coordinate.toLeft, coordinate.left]);
 
+    const alignStyle: React.CSSProperties = isLeftAligned
+        ? { display: "flex", flexDirection: "column-reverse", alignItems: "flex-end" }
+        : {};
+
+    return (
+        <div
+            ref={(el) => { if (el) refMenu.current = el; }}
+            style={{
+                position: "absolute",
+                zIndex,
+                left: isLeftAligned ? -1 * (menuWidth + 3 + xOffset) : coordinate.x,
+                top,
+                ...alignStyle
+            }}
+        >
+            {menu
+                ? menu(data)
+                : data.map((item, i, arr) => {
+                    item.status = !!item.status;
+                    const onMouseEnter = () => {
+                        if (item.status) return;
+                        arr.forEach((it, j) => (it.status = j === i));
+                        update();
+                    };
+                    const childMenu = item.next?.().filter(Boolean) as tMenuReactStrictly[];
+                    return (
+                        <div key={i} className="toLine" onMouseEnter={onMouseEnter}>
+                            {menuElement
+                                ? menuElement(item)
+                                : item.menuElement?.({ toLeft: isLeftAligned, data: item, className, update }) ??
+                                <MenuElement toLeft={isLeftAligned} data={item} className={className} update={update} />}
+                            <div>
+                                {item.status && childMenu && (
+                                    <div style={{ position: "relative" }}>
+                                        <MenuBase
+                                            data={childMenu}
+                                            coordinate={{ x: 3, y: 0, toLeft: isLeftAligned, left: leftPos }}
+                                        />
+                                    </div>
+                                )}
+                                {item.status && item.func && (
+                                    <div style={{ position: "relative" }}>
+                                        <MenuBase
+                                            menu={item.func}
+                                            data={[]}
+                                            coordinate={{ x: 3, y: 0, toLeft: isLeftAligned, left: leftPos }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
+        </div>
+    );
+}
