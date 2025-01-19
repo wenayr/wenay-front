@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {ReactElement, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {PromiseArrayListen, sleepAsync} from "wenay-common";
 
 /*******************************************************
@@ -175,9 +175,9 @@ export { TimeNum, MenuElement };
 
 
 type MenuBaseProps = {
-    menu?: (arr: tMenuReactStrictly[]) => ReactElement;
-    menuElement?: (item: tMenuReactStrictly) => ReactElement;
-    data: tMenuReactStrictly[];
+    menu?: (arr: tMenuReact[]) => ReactElement;
+    menuElement?: (item: tMenuReact) => ReactElement;
+    data: tMenuReact[];
     zIndex?: number;
     className?: (active?: boolean) => string;
     coordinate?: {
@@ -215,6 +215,8 @@ export function MenuBase({
     const [_, forceUpdate] = useState(false);
     const update = () => forceUpdate((p) => !p);
     const refMenu = useRef<HTMLDivElement | null>(null);
+
+    const dataMemo = useMemo(()=>data.filter(e=>e as tMenuReactStrictly) as tMenuReactStrictly[],[data, data.length]);
 
     const [top, setTop] = useState(coordinate.y);
     const [leftPos, setLeftPos] = useState(coordinate.x);
@@ -254,8 +256,8 @@ export function MenuBase({
             }}
         >
             {menu
-                ? menu(data)
-                : data.map((item, i, arr) => {
+                ? menu(dataMemo)
+                : dataMemo.map((item, i, arr) => {
                     item.status = !!item.status;
                     const onMouseEnter = () => {
                         if (item.status) return;
