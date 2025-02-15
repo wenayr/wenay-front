@@ -29,6 +29,8 @@ export * from "./src/mapMemory";
 export * from "./src/cash";
 
 export * from "./updateBy";
+
+export * from "./src/leftModal2";
 export {PageVisibilityProvider} from "./src/pageVisibilityContext";
 export {PageVisibilityContext} from "./src/pageVisibilityContext";
 

@@ -1,8 +1,9 @@
 import {ColDef, GridReadyEvent} from "ag-grid-community";
-type options = {update?: boolean, add?: boolean}
+type options = {update?: boolean, add?: boolean, updateBuffer?: boolean}
 const optionsDef = {
     update: true,
-    add: true
+    add: true,
+    updateBuffer: true,
 }
 export function applyTransactionAsyncUpdate<T>(
     grid: GridReadyEvent<T, any> | null | undefined,
@@ -23,17 +24,19 @@ export function applyTransactionAsyncUpdate<T>(
             // Получение ID для текущей строки
             const id = getId(e);
 
+            const newData= { ...(bufTable[id] ?? {}), ...e } as T
+            if (op.updateBuffer) bufTable[id] = newData
             // Попытка найти существующую строку по ID
             const a = grid.api.getRowNode(id)?.data;
 
             if (!a) {
                 // Если строка не найдена - добавить в массив для добавления
-                arrNew.push(bufTable[id] = { ...(bufTable[id] ?? {}), ...e } as T);
+                arrNew.push(newData);
                 return null; // Новая строка обрабатывается отдельно
             }
 
             // Если строка найдена - обновить данные в буфере
-            return (bufTable[id] = { ...a, ...(bufTable[id] ?? {}), ...e } as T);
+            return newData;
         }) // Убираем `null` и оставляем только существующие строки
             .filter(e => e) as T[];
 

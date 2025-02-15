@@ -1,4 +1,5 @@
 import React, {
+    memo,
     ReactNode,
     useEffect, useLayoutEffect,
     useMemo,
@@ -565,7 +566,8 @@ export type Drag2Props = {
 
     /** Начальное (или контролируемое) значение Y */
     y?: number;
-
+    /** вести отчет с правого края*/
+    right?: boolean;
     /**
      * Внешний ref для хранения координат.
      * Если передан, компонент будет обновлять ref при каждом движении.
@@ -579,6 +581,10 @@ export type Drag2Props = {
     onStop?: () => void;
 };
 
+
+
+
+
 /**
  * Компонент-обёртка, позволяющий перетаскивать вложенный элемент
  * как мышью, так и касаниями (touch).
@@ -587,8 +593,10 @@ export function Drag22({
                           children,
                           onX,
                           onY,
+
                           x = 0,
                           y = 0,
+                          right = false,
                           last,
                           onStart,
                           onStop
@@ -654,6 +662,8 @@ export function Drag22({
             };
 
             const handleMouseUp = () => {
+                offsetMouse.current.x = 0
+                offsetMouse.current.y = 0
                 document.removeEventListener("mousemove", handleMouseMove);
                 document.removeEventListener("mouseup", handleMouseUp);
                 setDraggingMouse(false);
@@ -695,6 +705,11 @@ export function Drag22({
                     (t) => t.identifier === offsetTouch.current?.id
                 );
                 if (ended) {
+
+                    // if (offsetTouch.current) {
+                    //     offsetTouch.current.x = 0
+                    //     offsetTouch.current.y = 0
+                    // }
                     offsetTouch.current = null;
                     document.removeEventListener("touchmove", handleTouchMove);
                     document.removeEventListener("touchend", handleTouchEnd);
@@ -731,10 +746,14 @@ export function Drag22({
      */
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
+        posRef.current.x = 0
+        posRef.current.y = 0
         offsetMouse.current = {
             x: posRef.current.x - e.clientX,
             y: posRef.current.y - e.clientY
         };
+        console.log("xxx")
+        console.log(offsetMouse.current.x, posRef.current.x, e.clientX)
         setDraggingMouse(true);
     };
 
@@ -760,174 +779,17 @@ export function Drag22({
      * Стили указываем позиционирование (left, top) по текущим координатам.
      * Вешаем обработчики onMouseDown / onTouchStart.
      */
-    return (
-        <div
-            style={{
-                position: "absolute",
-                left: posRef.current.x,
-                top: posRef.current.y
-            }}
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
-        >
-            {children}
-        </div>
-    );
+    return <div
+        style={{
+            position: "absolute",
+            left: right? undefined: 0, //undefined: posRef.current.x,
+            right: right? 0 : undefined, //,
+            top: 0 //posRef.current.y
+        }}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+    >
+        {children}
+    </div>
 }
 
-// export function Drag22({
-//                           children,
-//                           onY,
-//                           onX,
-//                           x = 0,
-//                           y = 0,
-//                           last,
-//                           onStart,
-//                           onStop,
-//                       }: {
-//     children: React.JSX.Element;
-//     onX?: (x: number) => void;
-//     onY?: (y: number) => void;
-//     x?: number;
-//     y?: number;
-//     last?: React.RefObject<{ x: number; y: number }>;
-//     onStart?: () => void;
-//     onStop?: () => void;
-// }) {
-//     const lastC = useRef<{ x: number; y: number } | null>(null);
-//     const lastT = useRef<{ x: number; y: number; id: number } | null>(null);
-//     const [a, setA] = useState(false);
-//     const [b, setB] = useState(false);
-//     const lastD = useRef<{ x: number; y: number }>(last?.current ?? { y: x, x: y });
-//
-//     // Обновляем значения `lastD` при изменении `x` или `y`
-//     useLayoutEffect(() => {
-//         lastD.current.x = x;
-//         lastD.current.y = y;
-//     }, [x, y]);
-//
-//     // Основная логика обработки событий перемещения
-//     useEffect(() => {
-//         if (!(a || b)) {
-//             onStop?.();
-//             return;
-//         }
-//
-//         if (a) {
-//             const handleMouseMove = (e: MouseEvent) => {
-//                 if (!lastC.current) {
-//                     lastC.current = { x: e.clientX, y: e.clientY };
-//                 }
-//
-//                 const data = lastC.current;
-//
-//                 // Вычисляем и обновляем координаты
-//                 lastD.current.x = e.clientX + data.x;
-//                 lastD.current.y = e.clientY + data.y;
-//                 onX?.(lastD.current.x);
-//                 onY?.(lastD.current.y);
-//
-//                 e.stopPropagation();
-//             };
-//
-//             const handleMouseUp = () => {
-//                 document.body.removeEventListener("mousemove", handleMouseMove);
-//                 document.body.removeEventListener("mouseup", handleMouseUp);
-//                 lastC.current = null;
-//                 setA(false);
-//             };
-//
-//             document.body.addEventListener("mousemove", handleMouseMove);
-//             document.body.addEventListener("mouseup", handleMouseUp);
-//
-//             onStart?.();
-//
-//             return () => {
-//                 document.body.removeEventListener("mousemove", handleMouseMove);
-//                 document.body.removeEventListener("mouseup", handleMouseUp);
-//             };
-//         }
-//
-//         if (b) {
-//             const handleTouchMove = (e: TouchEvent) => {
-//                 const data = lastT.current;
-//                 if (!data) return;
-//
-//                 const touch = Array.from(e.changedTouches).find((t) => t.identifier === data.id);
-//                 if (!touch) return;
-//
-//                 // Вычисляем и обновляем координаты
-//                 lastD.current.x = touch.clientX + data.x;
-//                 lastD.current.y = touch.clientY + data.y;
-//                 onX?.(lastD.current.x);
-//                 onY?.(lastD.current.y);
-//
-//                 e.stopPropagation();
-//             };
-//
-//             const handleTouchEnd = (e: TouchEvent) => {
-//                 const data = lastT.current;
-//
-//                 if (data) {
-//                     const touch = Array.from(e.changedTouches).find((t) => t.identifier === data.id);
-//                     if (touch) {
-//                         lastT.current = null;
-//                     }
-//                 }
-//
-//                 if (!lastT.current) {
-//                     document.body.removeEventListener("touchmove", handleTouchMove);
-//                     document.body.removeEventListener("touchend", handleTouchEnd);
-//                     setB(false);
-//                 }
-//             };
-//
-//             document.body.addEventListener("touchmove", handleTouchMove);
-//             document.body.addEventListener("touchend", handleTouchEnd);
-//
-//             onStart?.();
-//
-//             return () => {
-//                 document.body.removeEventListener("touchmove", handleTouchMove);
-//                 document.body.removeEventListener("touchend", handleTouchEnd);
-//             };
-//         }
-//     }, [a, b, onX, onY, onStart, onStop]);
-//
-//     // Создаем элемент для перемещения
-//     return useMemo(
-//         () => (
-//             <div
-//                 style={{
-//                     width: "auto",
-//                     height: "auto",
-//                 }}
-//                 onTouchStart={(e) => {
-//                     const touch = e.changedTouches[0];
-//                     if (touch) {
-//                         lastD.current.x = x;
-//                         lastD.current.y = y;
-//                         lastT.current = {
-//                             x: lastD.current.x - touch.clientX,
-//                             y: lastD.current.y - touch.clientY,
-//                             id: touch.identifier,
-//                         };
-//                     }
-//                     setB(true);
-//                 }}
-//                 onMouseDown={(e) => {
-//                     lastD.current.x = x;
-//                     lastD.current.y = y;
-//                     lastC.current = {
-//                         x: lastD.current.x - e.clientX,
-//                         y: lastD.current.y - e.clientY,
-//                     };
-//                     setA(true);
-//                 }}
-//             >
-//                 {children}
-//             </div>
-//         ),
-//         [children, x, y]
-//     );
-// }

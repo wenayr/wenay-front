@@ -6,33 +6,40 @@ import {MegaWebGLChart} from "../src/myChart/3d/3d";
 import {TestParams} from "./testParams";
 import {createContext, Suspense, use, useContext, useEffect, useMemo, useState} from "react";
 import {sleepAsync} from "wenay-common";
+import StickerMenu from "../src/StickerMenu";
+import { TestLeft333} from "../src/leftModal2";
 
 
 const a = {}
 const b = {}
 export function TestMain() {
     console.log(1111111)
-    // updateBy(b)
     return <div className={"maxSize"}>
-        <ExampleUsage/>
-        <ButtonChart/>
-        <ButtonChart3d/>
-        <App/>
-        <ButtonParams/>
-        <div className={"msTradeAlt"}
-            onClick={()=>{
-                renderBy(tt)
-            }}
-        >menu</div>
-        <div className={"msTradeAlt"}
-            onClick={()=>{
-                renderBy(a)
-            }}
-        >update</div>
-        <mouseMenuApi.ReactMouse>
-            <GridExample/>
-        </mouseMenuApi.ReactMouse>
+        <TestLeft333/>
     </div>
+    // updateBy(b)
+    // return <div className={"maxSize"}>
+    {/*    <StickerMenu />*/}
+    {/*    <ExampleUsage/>*/}
+    {/*    <ButtonChart/>*/}
+    {/*    <ButtonChart3d/>*/}
+    {/*    <App/>*/}
+    {/*    <ExampleApp/>*/}
+    {/*    <ButtonParams/>*/}
+    {/*    <div className={"msTradeAlt"}*/}
+    {/*        onClick={()=>{*/}
+    {/*            renderBy(tt)*/}
+    {/*        }}*/}
+    {/*    >menu</div>*/}
+    {/*    <div className={"msTradeAlt"}*/}
+    {/*        onClick={()=>{*/}
+    {/*            renderBy(a)*/}
+    {/*        }}*/}
+    {/*    >update</div>*/}
+    {/*    <mouseMenuApi.ReactMouse>*/}
+    {/*        <GridExample/>*/}
+    {/*    </mouseMenuApi.ReactMouse>*/}
+    {/*</div>*/}
 }
 
 const Container = () => {
