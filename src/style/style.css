@@ -334,12 +334,3 @@ body {
   marginTop: -1px;
   marginLeft: -1px;
 }
-
-
-/* Подключение шрифта */
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  src: url('./Roboto-Regular.ttf') format('truetype');
-}
