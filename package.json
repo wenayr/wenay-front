@@ -1,6 +1,6 @@
 {
   "name": "wenay-react",
-  "version": "0.0.78",
+  "version": "0.0.79",
   "description": "Common react",
   "strict": true,
   "main": "dist/index.js",
@@ -15,7 +15,7 @@
     "testReact": "react-app-rewired start --test",
     "_publish": "npm publish .\\dist",
     "_afterBuild": "node copyCompiledFiles.mjs .\\dist  &&  cd dist  &&  npm pkg delete scripts devDependencies private",
-    "_copyStyle": "xcopy /Y /S \".\\src\\style\\*.*\" \".\\lib\\style\\\"\n",
+    "_copyStyle": "xcopy /Y /S \".\\src\\style\\*.*\" \".\\dist\\lib\\style\\\"\n",
     "publish": "npm run _afterBuild && npm run _copyStyle &&  npm run _publish",
     "build & publish": "npm run build  &&  npm run _publish",
     "_clearDir": "IF exist lib (rd /s /q lib)  &&  mkdir lib  &&  copy tsconfig_lib.json lib\\tsconfig.json  &&  echo:"
