@@ -117,7 +117,7 @@ export function MenuRightApi() {
             array.forEach(e=>elements.splice(elements.indexOf(e), 1))
         },
         get(){return elements},
-        Render(){
+        Render({style}:{style?: React.CSSProperties}){
             const [el, setEl] = useState(elements)
             useEffect(() => {
                 render = setEl
@@ -125,7 +125,7 @@ export function MenuRightApi() {
                     render = null
                 }
             }, []);
-            return <DropdownMenu elements={el}/>
+            return <DropdownMenu elements={el} style={style}/>
         }
     }
 }
