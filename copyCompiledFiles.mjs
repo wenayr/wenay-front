@@ -4,6 +4,7 @@ import path from "path"
 let args= process.argv.slice(2);
 
 let srcDir = "lib";
+let style = "style";
 let tempDir= args[0];
 //tempDir="dist";
 if (! tempDir) throw new Error("script argument is not defined");
@@ -27,7 +28,14 @@ if (fs.existsSync(tempDir)) {
     }
 }
 else fs.mkdirSync(tempDir);
+
+
+if (!fs.existsSync(tempDir + "/" + style)) {
+    fs.mkdirSync(tempDir + "/" + style)
+}
 console.log("Copy files to",tempDir);
+
+
 if (1) {
 fs.copyFileSync("./package.json", path.join(tempDir,"package.json"));
 //fs.symlinkSync("../"+srcDir,  path.join(tempDir, srcDir), "junction");

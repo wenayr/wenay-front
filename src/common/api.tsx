@@ -1,6 +1,6 @@
 
-import "./style/menuRight.css"
-import "./style/style.css"
+import "../style/menuRight.css"
+import "../style/style.css"
 export * from "./src/applyTransactionAsyncUpdate";
 export * from "./src/addDownAnyKey";
 // export * from "./src/cash";

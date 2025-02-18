@@ -9,26 +9,10 @@
   /* альтернатива для MSTradeScroll */
   --color-scrollbar-thumb-alt: #4c4562;
 
-  /* Кнопки */
-  --color-red-button: #881b1b;
-  --color-red-button-hover: #c72929;
-  --color-black-button: #1c1b1b;
-  --color-black-button-hover: #444444;
-
   /* Основные текстовые/обводки */
   --color-text-base: #c4c4c4;
   --color-text-theme: #5D9FFA;
-  --color-border-base: #222d33;
   --color-border-common: rgb(50, 62, 71);
-
-  /* Прочие часто повторяющиеся */
-  --color-window-default: #1d262c;
-  --color-window-head: #2b363c;
-
-  /* Доп. цвета (используются несколько раз) */
-  --color-toButtonSw: #727272;     /* .toButtonSw */
-  --color-toButtonSwHover: #a8a8a8;/* .toButtonSw:hover */
-  --color-toButtonSwActive: #e8e8e8; /* .toButtonSwA */
 }
 
 /* Сбрасываем box-sizing */
