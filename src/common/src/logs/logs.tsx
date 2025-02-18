@@ -170,7 +170,7 @@ export function PageLogs({update}: {update?: number}) {
         ] satisfies tColum2<el>[]
         return <div className={"maxSize"}>
             <AgGridReact
-                className = "ag-theme-alpine-dark ag-theme-alpine2" // ag-theme-alpine-dark3
+                // className = "ag-theme-alpine-dark ag-theme-alpine2" // ag-theme-alpine-dark3
                 suppressCellFocus = {true}
                 onGridReady = {(a)=>{
                     apiGrid.current = a  //as GridReadyEvent<tColum>

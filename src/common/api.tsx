@@ -1,4 +1,6 @@
 
+import "./style/menuRight.css"
+import "./style/style.css"
 export * from "./src/applyTransactionAsyncUpdate";
 export * from "./src/addDownAnyKey";
 // export * from "./src/cash";
@@ -25,6 +27,7 @@ export * from "./src/RNDFunc3";
 export * from "./src/styleGrid";
 export * from "./src/modal";
 export * from "./src/mapMemory";
+export * from "./src/RightMenu";
 
 export * from "./src/cash";
 

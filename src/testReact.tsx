@@ -1,4 +1,5 @@
 import {createRoot} from "react-dom/client";
+import "./index"
 import {TestMain} from "./common/testUseReact/use";
 import {GridStyleDefault} from "./common/src/styleGrid";
 

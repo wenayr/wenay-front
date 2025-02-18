@@ -55,7 +55,10 @@ function Tttt({y_, x_, api, arr, zIndex}:{
                                          onTouchStart={e => setPage(mainPage) // setPage(arr[i][1])
                                          }
     >
-        <a rel={"ds"} href={`#`+i} style={{cursor: "pointer", }}>{e[0]}</a>
+        <a rel={"ds"} href={`#`+i} style={{font: "inherit", color: "inherit",
+            textDecoration:"inherit",
+            cursor: "default",
+        }}>{e[0]}</a>
     </div>)
     const {width: wwWidth} = useViewport();
     const tt = async(target: number) => {
@@ -143,6 +146,12 @@ function Tttt({y_, x_, api, arr, zIndex}:{
                 }
             }
         }} style={{position: "absolute", right: x * -1, top: y, zIndex}}
+             onClick={()=>{
+                 if (!open) {
+                     setOpen(true)
+                     tt(ww.current ? sizeWidthMenu * wwWidth * -1 : -300)
+                 }
+             }}
              onMouseDown={() => {
                  status.current.status = 1
              }}
@@ -288,10 +297,10 @@ export function getApiLeftMenu(){
 
 
 export const ApiLeftMenu = getApiLeftMenu()
-// ApiLeftMenu.setMenu([
-//     {button: <div style={{width: 200, height: 50, background: "rgb(92,50,213)"}}>1</div>, el: () => <div>1</div>, color: "rgb(92,50,213)"},
-//     {button: <div style={{width: 200, height: 50, background: "rgb(98,149,58)"}}>2</div>, el: () => <div>2</div>},
-// ], "test")
+ApiLeftMenu.setMenu([
+    {button: <div style={{width: 200, height: 50, background: "rgb(92,50,213)"}}>1</div>, el: () => <div>1</div>, color: "rgb(92,50,213)"},
+    {button: <div style={{width: 200, height: 50, background: "rgb(98,149,58)"}}>2</div>, el: () => <div>2</div>},
+], "test")
 export function TestLeft333() {
     return <ApiLeftMenu.Modal2 zIndex={20} />
 }

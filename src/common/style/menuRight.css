@@ -1,0 +1,75 @@
+:root {
+  --base-border: 1px solid rgba(255, 255, 255, 0.41);
+  --base-color-hover: #fff;
+}
+:root {
+  --menu-bg-color: rgba(0, 0, 0, 0.65);
+  --menu-blur: 10px;
+  --menu-border: var(--base-border);
+  --menu-active-background: rgba(255, 255, 255, 0.23);
+
+  --menu-item-color: var(--base-color-hover);
+  --menu-item-hover-color: #101010;
+  --menu-item-hover-bg-color: var(--base-color-hover);
+
+}
+
+.menu-container{
+  position: absolute;
+  user-select: none;
+  right: 0;
+}
+.menu-container.activeM {
+  background: var(--menu-active-background);
+}
+
+.menu-button {
+  padding: 4px 10px;
+  color: var(--menu-item-color);
+  font-size: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.dropdown-content2 {
+  position: absolute;
+  right: 0;
+  top: 100%;
+}
+
+.dropdown-content {
+  background: var(--menu-bg-color);
+  border-top: var(--menu-border);
+  border-left: var(--menu-border);
+  border-right: var(--menu-border);
+  user-select: none;
+  min-width: 50px;
+  height: min-content;
+  width: max-content;
+}
+
+.menu-item {
+  min-height: 30px;
+  padding: 10px;
+  position: relative;
+  cursor: pointer;
+  border-bottom: var(--menu-border);
+  transition: background 0.3s;
+}
+
+.menu-item:hover,
+.menu-item.force-hover {
+  background: var(--menu-item-hover-bg-color);
+  color: var(--menu-item-hover-color);
+}
+
+.submenu {
+  background: var(--menu-bg-color);
+
+  backdrop-filter: blur(var(--menu-blur)); /* Размытие */
+  -webkit-backdrop-filter: blur(var(--menu-blur)); /* Для Safari */
+
+  border: var(--menu-border);
+  min-width: 200px;
+}

@@ -217,7 +217,8 @@ export function LogsTable() {
     }, [minVarLogs]);
 
     return (
-        <div className="ag-theme-alpine-dark" style={{ width: '100%', height: '100%' }}>
+        // <div className="ag-theme-alpine-dark" style={{ width: '100%', height: '100%' }}>
+        <div style={{ width: '100%', height: '100%' }}>
             <AgGridReact
                 ref={gridRef as any}
                 onGridReady={(params) => {
