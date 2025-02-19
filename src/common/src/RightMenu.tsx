@@ -54,7 +54,7 @@ export function DropdownMenu({elements, style, position: p = 'right'}: DropdownM
 
     const handleClickOutside = () => {
         setIsOpen(false);
-        setIsFixed(false);
+        // setIsFixed(false);
     };
 
     const handleToggle = () => {
