@@ -17,7 +17,7 @@
 .menu-container{
   position: absolute;
   user-select: none;
-  right: 0;
+  /*right: 0;*/
 }
 .menu-container.activeM {
   background: var(--menu-active-background);
@@ -34,7 +34,7 @@
 
 .dropdown-content2 {
   position: absolute;
-  right: 0;
+  /*right: 0;*/
   top: 100%;
 }
 

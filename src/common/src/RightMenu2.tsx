@@ -2,7 +2,6 @@ import {useState, useRef, useEffect, FC, JSX, useMemo} from 'react';
 import {DivOutsideClick} from "./commonFuncReact";
 import {GetModalFuncJSX} from "./modal";
 import {sleepAsync} from "wenay-common";
-import {Drag22} from "./RNDFunc3";
 import {useDraggable} from "./use_draggable_hook";
 
 type MenuElement = {
@@ -10,53 +9,35 @@ type MenuElement = {
     subMenuContent: () => JSX.Element;
 };
 
-// Добавляем тип для пропса position
-type DropdownMenuProps = {
-    elements: MenuElement[];
-    style?: React.CSSProperties;
-    position?: 'left' | 'right'; // Новый параметр
-};
-
-export function DropdownMenu({elements, style, position = 'right'}: DropdownMenuProps) {
+export function DropdownMenu({elements, style}: { elements: MenuElement[], style?: React.CSSProperties }) {
     const [isOpen, setIsOpen] = useState(false);
     const [isFixed, setIsFixed] = useState(false);
     const [select, setSelect] = useState<number|null>(null);
     const data = useRef({m1: false, m2: false});
     const jsx = useMemo(GetModalFuncJSX,[])
+
     const jsxRender = useMemo(()=><jsx.Render/>,[jsx])
-
-    const {position: pos, dragProps} = useDraggable(0,0)
-
     const handleClickOutside = () => {
         setIsOpen(false);
         setIsFixed(false);
     };
-
+    // Закрытие меню при клике снаружи
     const handleToggle = () => {
         setIsFixed(p => !p);
         setIsOpen(p => !p);
     };
-
     const handleSelect = (item: MenuElement, index: number) => {
         jsx.set(item.subMenuContent)
         setSelect(index)
     };
 
+    const {position, dragProps} = useDraggable(0, 0);
+
     return (
         <DivOutsideClick
             outsideClick={handleClickOutside}
             className={"menu-container" + (isFixed ? " activeM" : "")}
-            style={{
-                ...style,
-                // Добавляем выравнивание для позиционирования
-                [position]: 0,
-                ...(position === 'left'? {
-                    left: pos.x,
-                    right: 'auto'
-                } : {
-                    right: -pos.x
-                }),
-                top: pos.y,
+            style= {{...style,
             }}
             onMouseEnter={() => !isFixed && setIsOpen(true)}
             onMouseLeave={() => !isFixed && setIsOpen(false)}
@@ -68,6 +49,7 @@ export function DropdownMenu({elements, style, position = 'right'}: DropdownMenu
             >
                 ☰
             </div>
+
             {(isFixed || isOpen) && (
                 <div
                     onMouseLeave={() => {
@@ -81,11 +63,8 @@ export function DropdownMenu({elements, style, position = 'right'}: DropdownMenu
                     className="dropdown-content2"
                     style={{
                         display: 'flex',
-                        // Меняем направление в зависимости от позиции
-                        [position]: 0,
-                        right: position === 'left' ? 'auto' : 0,
-                        flexDirection: position === 'left' ? 'row' : 'row-reverse'
-                    }}>
+                        flexDirection: "row-reverse"
+                }}>
                     <div className="dropdown-content"
                          onMouseLeave={async () => {
                              data.current.m1 = false
@@ -130,6 +109,7 @@ export function DropdownMenu({elements, style, position = 'right'}: DropdownMenu
         </DivOutsideClick>
     );
 };
+
 export function MenuRightApi() {
     const elements: MenuElement[] = []
     let render: null|(React.Dispatch<React.SetStateAction<MenuElement[]>>) = null
@@ -152,7 +132,7 @@ export function MenuRightApi() {
                     render = null
                 }
             }, []);
-            return <DropdownMenu elements={el} style={style} position='right'/>
+            return <DropdownMenu elements={el} style={style}/>
         }
     }
 }

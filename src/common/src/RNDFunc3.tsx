@@ -579,6 +579,8 @@ export type Drag2Props = {
 
     /** Вызывается при окончании перетаскивания (мышь и touch) */
     onStop?: () => void;
+
+    dragging?: boolean;
 };
 
 
@@ -588,64 +590,34 @@ export type Drag2Props = {
 /**
  * Компонент-обёртка, позволяющий перетаскивать вложенный элемент
  * как мышью, так и касаниями (touch).
+ *
+ * Функция исключительно как хук на изменения параметров при движении - хоть и имеет свой компонент (для отсчета)
+ * возвращает пройденное расстояние при перемещении дочернего элемента
  */
 export function Drag22({
-                          children,
-                          onX,
-                          onY,
-
-                          x = 0,
-                          y = 0,
-                          right = false,
-                          last,
-                          onStart,
-                          onStop
-                      }: Drag2Props) {
-    /**
-     * Храним текущий «смещающий» вектор для мыши:
-     * (позиция блока - позиция курсора), чтобы при mousemove легко считать новые координаты.
-     */
+                           children,
+                           onX,
+                           onY,
+                           x = 0,
+                           y = 0,
+                           right = false,
+                           last,
+                           dragging,
+                           onStart,
+                           onStop
+                       }: Drag2Props) {
     const offsetMouse = useRef({ x: 0, y: 0 });
-
-    /**
-     * Храним аналогичное «смещение» для тач-событий (при touchstart).
-     * Плюс identifier, чтобы понять, каким пальцем двигаем.
-     */
     const offsetTouch = useRef<{ x: number; y: number; id: number } | null>(null);
-
-    /** Булевы флаги, показывающие, идёт ли сейчас перетаскивание мышью или через touch */
     const [draggingMouse, setDraggingMouse] = useState(false);
     const [draggingTouch, setDraggingTouch] = useState(false);
+    const posRef = useRef<{ x: number; y: number }>(last?.current ?? { x, y });
 
-    /**
-     * Внутренняя ref для «текущей» позиции элемента.
-     * Если передан внешний `last`, то инициализируемся им, иначе берём { x, y }.
-     */
-    const posRef = useRef<{ x: number; y: number }>(
-        last?.current ?? { x, y }
-    );
-
-    /**
-     * Синхронизуем posRef с входящими x/y при их изменении извне.
-     * (Например, если координаты контролируются родителем.)
-     */
     useLayoutEffect(() => {
         posRef.current.x = x;
         posRef.current.y = y;
     }, [x, y]);
 
-    /**
-     * Основной эффект, который «реагирует» на включение/выключение перетаскивания.
-     * Если ни мышь, ни touch не активны (draggingMouse = false и draggingTouch = false),
-     * вызываем onStop и ничего больше не делаем.
-     *
-     * Если draggingMouse = true — навешиваем события mousemove / mouseup и при каждом движении
-     * вычисляем новые координаты. По mouseup снимаем слушатели и сбрасываем draggingMouse.
-     *
-     * Аналогично для draggingTouch = true — навешиваем touchmove / touchend и следим за конкретным пальцем.
-     */
     useEffect(() => {
-        // Если мы не тащим ни мышью, ни пальцем, значит перетаскивание закончилось.
         if (!draggingMouse && !draggingTouch) {
             onStop?.();
             return;
@@ -653,7 +625,6 @@ export function Drag22({
 
         if (draggingMouse) {
             const handleMouseMove = (e: MouseEvent) => {
-                // Новая позиция = текущая координата курсора + сохранённое смещение
                 const newX = e.clientX + offsetMouse.current.x;
                 const newY = e.clientY + offsetMouse.current.y;
                 posRef.current = { x: newX, y: newY };
@@ -662,8 +633,8 @@ export function Drag22({
             };
 
             const handleMouseUp = () => {
-                offsetMouse.current.x = 0
-                offsetMouse.current.y = 0
+                offsetMouse.current.x = 0;
+                offsetMouse.current.y = 0;
                 document.removeEventListener("mousemove", handleMouseMove);
                 document.removeEventListener("mouseup", handleMouseUp);
                 setDraggingMouse(false);
@@ -671,11 +642,8 @@ export function Drag22({
 
             document.addEventListener("mousemove", handleMouseMove);
             document.addEventListener("mouseup", handleMouseUp);
-
-            // Уведомляем, что началось перетаскивание
             onStart?.();
 
-            // Функция очистки, если Effect пере-вызовется или компонент демонтируется
             return () => {
                 document.removeEventListener("mousemove", handleMouseMove);
                 document.removeEventListener("mouseup", handleMouseUp);
@@ -685,7 +653,6 @@ export function Drag22({
         if (draggingTouch) {
             const handleTouchMove = (e: TouchEvent) => {
                 if (!offsetTouch.current) return;
-                // Ищем наш палец по identifier
                 const theTouch = Array.from(e.changedTouches).find(
                     (t) => t.identifier === offsetTouch.current?.id
                 );
@@ -700,16 +667,10 @@ export function Drag22({
 
             const handleTouchEnd = (e: TouchEvent) => {
                 if (!offsetTouch.current) return;
-                // Проверяем, отпущен ли наш «целевой» палец
                 const ended = Array.from(e.changedTouches).find(
                     (t) => t.identifier === offsetTouch.current?.id
                 );
                 if (ended) {
-
-                    // if (offsetTouch.current) {
-                    //     offsetTouch.current.x = 0
-                    //     offsetTouch.current.y = 0
-                    // }
                     offsetTouch.current = null;
                     document.removeEventListener("touchmove", handleTouchMove);
                     document.removeEventListener("touchend", handleTouchEnd);
@@ -719,7 +680,6 @@ export function Drag22({
 
             document.addEventListener("touchmove", handleTouchMove);
             document.addEventListener("touchend", handleTouchEnd);
-
             onStart?.();
 
             return () => {
@@ -729,39 +689,25 @@ export function Drag22({
         }
     }, [draggingMouse, draggingTouch, onX, onY, onStart, onStop]);
 
-    /**
-     * Если передан внешний ref (last), синхронизируем его с текущей позицией
-     * при каждом рендере/обновлении (useLayoutEffect или useEffect).
-     */
     useLayoutEffect(() => {
         if (last) {
             last.current = posRef.current;
         }
     });
 
-    /**
-     * Обработчик мыши:
-     * При mousedown вычисляем смещение (текущая позиция - позиция курсора).
-     * Ставим флаг draggingMouse = true.
-     */
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
-        posRef.current.x = 0
-        posRef.current.y = 0
+        posRef.current.x = 0;
+        posRef.current.y = 0;
         offsetMouse.current = {
             x: posRef.current.x - e.clientX,
             y: posRef.current.y - e.clientY
         };
-        console.log("xxx")
-        console.log(offsetMouse.current.x, posRef.current.x, e.clientX)
+        console.log("xxx");
+        console.log(offsetMouse.current.x, posRef.current.x, e.clientX);
         setDraggingMouse(true);
     };
 
-    /**
-     * Обработчик touch:
-     * Аналогично, берём первый палец, считаем смещение.
-     * Ставим draggingTouch = true.
-     */
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         const t = e.changedTouches[0];
         if (!t) return;
@@ -774,22 +720,18 @@ export function Drag22({
         setDraggingTouch(true);
     };
 
-    /**
-     * Рендерим контейнер, в котором лежит `children`.
-     * Стили указываем позиционирование (left, top) по текущим координатам.
-     * Вешаем обработчики onMouseDown / onTouchStart.
-     */
-    return <div
-        style={{
-            position: "absolute",
-            left: right? undefined: 0, //undefined: posRef.current.x,
-            right: right? 0 : undefined, //,
-            top: 0 //posRef.current.y
-        }}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-    >
-        {children}
-    </div>
+    return (
+        <div
+            style={{
+                position: "absolute",
+                left: right ? undefined : 0,
+                right: right ? 0 : undefined,
+                top: 0
+            }}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+        >
+            {children}
+        </div>
+    );
 }
-
