@@ -14,12 +14,14 @@ export interface UseDraggableReturn {
 }
 
 type DragEndCallback = (finalPosition: Position) => void;
+type DragStartCallback = () => void;
 
 export function useDraggable(
     initialX: number = 0,
     initialY: number = 0,
     timeOut: number = 500,
-    onDragEnd?: DragEndCallback
+    onDragEnd?: DragEndCallback,
+    onDragStart?: DragStartCallback
 ): UseDraggableReturn {
     const [position, setPosition] = useState<Position>({ x: initialX, y: initialY });
     const offsetMouse = useRef<Position>({ x: 0, y: 0 });
@@ -46,8 +48,8 @@ export function useDraggable(
     const handleMouseDown: React.MouseEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault();
         offsetMouse.current = {
-            x: position.x - e.clientX,
-            y: position.y - e.clientY,
+            x: e.clientX,
+            y: e.clientY,
         };
         if (timeOut) {
             holdTimerMouse.current = window.setTimeout(() => {
@@ -57,6 +59,7 @@ export function useDraggable(
             }, timeOut);
             document.addEventListener("mouseup", handleMouseUpForHold);
         }
+        onDragStart?.()
     };
 
     const cancelTouchHold = () => {
@@ -75,8 +78,8 @@ export function useDraggable(
         const touch = e.changedTouches[0];
         if (!touch) return;
         offsetTouch.current = {
-            x: position.x - touch.clientX,
-            y: position.y - touch.clientY,
+            x: touch.clientX,
+            y: touch.clientY,
             id: touch.identifier,
         };
         if (timeOut) {
@@ -92,12 +95,14 @@ export function useDraggable(
     useEffect(() => {
         if (draggingMouse) {
             const handleMouseMove = (e: MouseEvent) => {
-                const newX = e.clientX + offsetMouse.current.x;
-                const newY = e.clientY + offsetMouse.current.y;
+                const newX = e.clientX - offsetMouse.current.x;
+                const newY = e.clientY - offsetMouse.current.y;
                 setPosition({ x: newX, y: newY });
             };
 
             const handleMouseUp = (e: MouseEvent) => {
+
+                setPosition({ x: 0, y: 0 });
                 // Остальные действия по завершению перетаскивания мышью
                 document.removeEventListener("mousemove", handleMouseMove);
                 document.removeEventListener("mouseup", handleMouseUp);
@@ -127,8 +132,8 @@ export function useDraggable(
                     (t) => t.identifier === offsetTouch.current?.id
                 );
                 if (!theTouch) return;
-                const newX = theTouch.clientX + offsetTouch.current.x;
-                const newY = theTouch.clientY + offsetTouch.current.y;
+                const newX = theTouch.clientX - offsetTouch.current.x;
+                const newY = theTouch.clientY - offsetTouch.current.y;
                 setPosition({ x: newX, y: newY });
             };
 
@@ -138,6 +143,7 @@ export function useDraggable(
                     (t) => t.identifier === offsetTouch.current?.id
                 );
                 if (ended) {
+                    setPosition({ x: 0, y: 0 });
                     document.removeEventListener("touchmove", handleTouchMove);
                     document.removeEventListener("touchend", handleTouchEnd);
                     setDraggingTouch(false);

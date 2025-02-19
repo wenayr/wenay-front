@@ -27,30 +27,36 @@ export function DropdownMenu({elements, style, position: p = 'right'}: DropdownM
     const [position, setPosition] = useState(p)
     const [down, setDown] = useState(true)
 
+    const positionLast = useRef<{x: number, y: number}>({x: 0, y: 0});
     const handleDragEnd = (finalPosition: Position) => {
+        positionLast.current.y += finalPosition.y
         if (position == "left") {
-            if (finalPosition.x > window.innerWidth * 0.6) {
+            positionLast.current.x += finalPosition.x
+            if (positionLast.current.x > window.innerWidth * 0.6) {
+                positionLast.current.x = window.innerWidth - positionLast.current.x
                 setPosition("right")
             }
         }
         if (position == "right") {
-            if (finalPosition.x < window.innerWidth * 0.4) {
+            positionLast.current.x -= finalPosition.x
+            if (positionLast.current.x > window.innerWidth * 0.6) {
+                positionLast.current.x = window.innerWidth - positionLast.current.x
                 setPosition("left")
             }
         }
         if (down) {
-            console.log(finalPosition.y, window.innerHeight)
-            if (finalPosition.y > window.innerHeight * 0.8) {
+            if (positionLast.current.y > window.innerHeight * 0.8) {
                 setDown(false)
             }
         } else {
-            if (finalPosition.y < window.innerHeight * 0.4) {
+            if (positionLast.current.y < window.innerHeight * 0.4) {
                 setDown(true)
             }
         }
     };
+    const {position: pos, dragProps} = useDraggable(0,0, 50, handleDragEnd, ()=>{
 
-    const {position: pos, dragProps} = useDraggable(0,0, 500, handleDragEnd)
+    })
 
     const handleClickOutside = () => {
         setIsOpen(false);
@@ -125,7 +131,8 @@ export function DropdownMenu({elements, style, position: p = 'right'}: DropdownM
                 </div>
             </div>
         )
-
+    const x = position === 'left'? positionLast.current.x + pos.x : positionLast.current.x - pos.x
+    const y =  positionLast.current.y + pos.y
     return (
         <DivOutsideClick
             outsideClick={handleClickOutside}
@@ -135,14 +142,15 @@ export function DropdownMenu({elements, style, position: p = 'right'}: DropdownM
                 display: 'flex',
                 // Добавляем выравнивание для позиционирования
                 // [position]: 0,
-                ...(p === 'left'? {
-                    left: pos.x < 0 ? 0 : pos.x > window.innerWidth - 50 ? window.innerWidth - 50 : pos.x,
+                ...(position === 'left'? {
+                    left: x < 0 ? 0 : x > window.innerWidth - 50 ? window.innerWidth - 50 : x,
                     right: 'auto'
                 } : {
-                    right: -pos.x < 0 ? 0 : -pos.x > window.innerWidth - 50 ? window.innerWidth - 50 : -pos.x,//   ,
+                    right: x < 0 ? 0 : x > window.innerWidth - 50 ? 20 : x,//   ,
+                    // right: -pos.x < 0 ? 0 : -pos.x > window.innerWidth - 50 ? window.innerWidth - 50 : -pos.x,//   ,
                     left: 'auto'
                 }),
-                top: pos.y < 0 ? 0 : pos.y > window.innerHeight - 50 ? window.innerHeight - 50 : pos.y,
+                top: y < 0 ? 0 : y > window.innerHeight - 50 ? window.innerHeight - 50 : y,
             }}
             onMouseEnter={() => !isFixed && setIsOpen(true)}
             onMouseLeave={() => !isFixed && setIsOpen(false)}
