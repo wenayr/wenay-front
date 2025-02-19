@@ -24,24 +24,24 @@ export function TestMain() {
         <DropdownMenuTest/>
         <DraggableComponent/>
         <div style={{height: 250}}></div>
-        <ExampleUsage/>
-        <ButtonChart/>
-        <ButtonChart3d/>
-        <App/>
-        <ButtonParams/>
-        <div className={"msTradeAlt"}
-            onClick={()=>{
-                renderBy(tt)
-            }}
-        >menu</div>
-        <div className={"msTradeAlt"}
-            onClick={()=>{
-                renderBy(a)
-            }}
-        >update</div>
-        <mouseMenuApi.ReactMouse>
-            <GridExample/>
-        </mouseMenuApi.ReactMouse>
+        {/*<ExampleUsage/>*/}
+        {/*<ButtonChart/>*/}
+        {/*<ButtonChart3d/>*/}
+        {/*<App/>*/}
+        {/*<ButtonParams/>*/}
+        {/*<div className={"msTradeAlt"}*/}
+        {/*    onClick={()=>{*/}
+        {/*        renderBy(tt)*/}
+        {/*    }}*/}
+        {/*>menu</div>*/}
+        {/*<div className={"msTradeAlt"}*/}
+        {/*    onClick={()=>{*/}
+        {/*        renderBy(a)*/}
+        {/*    }}*/}
+        {/*>update</div>*/}
+        {/*<mouseMenuApi.ReactMouse>*/}
+        {/*    <GridExample/>*/}
+        {/*</mouseMenuApi.ReactMouse>*/}
     </div>
 }
 

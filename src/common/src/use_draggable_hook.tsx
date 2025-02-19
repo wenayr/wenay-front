@@ -1,21 +1,25 @@
-import {useRef, useState, useEffect, ReactEventHandler} from "react";
+import { useRef, useState, useEffect } from "react";
 
-interface Position {
+export interface Position {
     x: number;
     y: number;
 }
 
-interface UseDraggableReturn {
+export interface UseDraggableReturn {
     position: Position;
     dragProps: {
         onMouseDown: React.MouseEventHandler<HTMLDivElement>;
         onTouchStart: React.TouchEventHandler<HTMLDivElement>;
     };
 }
+
+type DragEndCallback = (finalPosition: Position) => void;
+
 export function useDraggable(
     initialX: number = 0,
     initialY: number = 0,
     timeOut: number = 500,
+    onDragEnd?: DragEndCallback
 ): UseDraggableReturn {
     const [position, setPosition] = useState<Position>({ x: initialX, y: initialY });
     const offsetMouse = useRef<Position>({ x: 0, y: 0 });
@@ -27,7 +31,6 @@ export function useDraggable(
     const holdTimerMouse = useRef<number | null>(null);
     const holdTimerTouch = useRef<number | null>(null);
 
-    // Обработчик для отмены отложенного старта перетаскивания мышью
     const cancelMouseHold = () => {
         if (holdTimerMouse.current) {
             clearTimeout(holdTimerMouse.current);
@@ -36,7 +39,6 @@ export function useDraggable(
         document.removeEventListener("mouseup", handleMouseUpForHold);
     };
 
-    // Этот обработчик отменяет таймер, если пользователь отпустил кнопку до истечения 2 секунд
     const handleMouseUpForHold = () => {
         cancelMouseHold();
     };
@@ -48,19 +50,15 @@ export function useDraggable(
             y: position.y - e.clientY,
         };
         if (timeOut) {
-            // Запускаем таймер, который включит режим перетаскивания через 2 секунды
             holdTimerMouse.current = window.setTimeout(() => {
                 setDraggingMouse(true);
                 holdTimerMouse.current = null;
                 document.removeEventListener("mouseup", handleMouseUpForHold);
-            }, timeOut)
-            // Слушаем mouseup, чтобы отменить запуск перетаскивания, если кнопку отпустили ранее
+            }, timeOut);
             document.addEventListener("mouseup", handleMouseUpForHold);
         }
-
     };
 
-    // Обработчик для отмены отложенного старта перетаскивания тачем
     const cancelTouchHold = () => {
         if (holdTimerTouch.current) {
             clearTimeout(holdTimerTouch.current);
@@ -82,13 +80,11 @@ export function useDraggable(
             id: touch.identifier,
         };
         if (timeOut) {
-            // Запускаем таймер для тач-события
             holdTimerTouch.current = window.setTimeout(() => {
                 setDraggingTouch(true);
                 holdTimerTouch.current = null;
                 document.removeEventListener("touchend", handleTouchEndForHold);
             }, timeOut);
-
             document.addEventListener("touchend", handleTouchEndForHold);
         }
     };
@@ -101,11 +97,16 @@ export function useDraggable(
                 setPosition({ x: newX, y: newY });
             };
 
-            const handleMouseUp = () => {
-                offsetMouse.current = { x: 0, y: 0 };
+            const handleMouseUp = (e: MouseEvent) => {
+                // Остальные действия по завершению перетаскивания мышью
                 document.removeEventListener("mousemove", handleMouseMove);
                 document.removeEventListener("mouseup", handleMouseUp);
                 setDraggingMouse(false);
+                if (onDragEnd) {
+                    onDragEnd({ ...position });
+                }
+                // Сбрасываем смещение
+                offsetMouse.current = { x: 0, y: 0 };
             };
 
             document.addEventListener("mousemove", handleMouseMove);
@@ -116,7 +117,7 @@ export function useDraggable(
                 document.removeEventListener("mouseup", handleMouseUp);
             };
         }
-    }, [draggingMouse]);
+    }, [draggingMouse, onDragEnd, position]);
 
     useEffect(() => {
         if (draggingTouch) {
@@ -137,10 +138,13 @@ export function useDraggable(
                     (t) => t.identifier === offsetTouch.current?.id
                 );
                 if (ended) {
-                    offsetTouch.current = null;
                     document.removeEventListener("touchmove", handleTouchMove);
                     document.removeEventListener("touchend", handleTouchEnd);
                     setDraggingTouch(false);
+                    if (onDragEnd) {
+                        onDragEnd({ ...position });
+                    }
+                    offsetTouch.current = null;
                 }
             };
 
@@ -152,7 +156,7 @@ export function useDraggable(
                 document.removeEventListener("touchend", handleTouchEnd);
             };
         }
-    }, [draggingTouch]);
+    }, [draggingTouch, onDragEnd, position]);
 
     return {
         position,
