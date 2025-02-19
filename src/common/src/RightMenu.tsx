@@ -1,9 +1,9 @@
-import {useState, useRef, useEffect, FC, JSX, useMemo} from 'react';
+import {JSX, useEffect, useMemo, useRef, useState} from 'react';
 import {DivOutsideClick} from "./commonFuncReact";
 import {GetModalFuncJSX} from "./modal";
 import {sleepAsync} from "wenay-common";
-import {Drag22} from "./RNDFunc3";
 import {Position, useDraggable} from "./use_draggable_hook";
+import {DraggableOutlineDiv} from "./DraggableOutlineDiv";
 
 type MenuElement = {
     label: string;
@@ -38,16 +38,16 @@ export function DropdownMenu({elements, style, position: p = 'right'}: DropdownM
                 setPosition("left")
             }
         }
-        // if (down) {
-        //     console.log(finalPosition.y, window.innerHeight)
-        //     if (finalPosition.y > window.innerHeight * 0.6) {
-        //         setDown(false)
-        //     }
-        // } else {
-        //     if (finalPosition.y < window.innerHeight * 0.4) {
-        //         setDown(true)
-        //     }
-        // }
+        if (down) {
+            console.log(finalPosition.y, window.innerHeight)
+            if (finalPosition.y > window.innerHeight * 0.8) {
+                setDown(false)
+            }
+        } else {
+            if (finalPosition.y < window.innerHeight * 0.4) {
+                setDown(true)
+            }
+        }
     };
 
     const {position: pos, dragProps} = useDraggable(0,0, 500, handleDragEnd)
@@ -76,7 +76,7 @@ export function DropdownMenu({elements, style, position: p = 'right'}: DropdownM
                 onMouseEnter={()=>{
                     data.current.m1 = true
                 }}
-                className="dropdown-content2"
+                className={"dropdown-content2" + (!down ? " dropdown-up" :"")} //
                 style={{
                     display: 'flex',
                     // Меняем направление в зависимости от позиции
@@ -204,6 +204,7 @@ export function DropdownMenuTest() {
 const SubMenu = () => {
     return (
         <div className="maxSize">
+            <DraggableOutlineDiv/>
             <div className="submenu-item">Subitem 1</div>
             <div className="submenu-item">Subitem 2</div>
             <div className="submenu-item">Subitem 3</div>
@@ -220,3 +221,4 @@ const SubMenu2 = () => {
         </div>
     );
 };
+

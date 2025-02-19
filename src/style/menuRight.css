@@ -37,10 +37,12 @@
   /*right: 0;*/
   top: 100%;
 }
-/*.dropdown-content2.dropdown-up {*/
-/*   top: auto;*/
-/*   bottom: 100%;*/
-/* }*/
+
+.dropdown-content2.dropdown-up {
+  top: auto;
+  bottom: 100%;
+  align-items: flex-end;
+ }
 
 
 .dropdown-content {
@@ -77,4 +79,61 @@
 
   border: var(--menu-border);
   min-width: 200px;
+}
+.draggable-div {
+  position: relative;
+  /*padding: 20px;*/
+  /*margin: 20px;*/
+  /*background-color: #fff;*/
+  /*border: 1px solid #ddd; !* базовая граница, можно убрать *!*/
+  cursor: pointer;
+}
+
+/* Псевдоэлемент для отрисовки обводки */
+.draggable-div::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Запуск анимации, когда зажата кнопка мыши */
+.draggable-div.outline-animation::after {
+  animation: running-line 0.5s linear forwards;
+}
+
+/* Если анимация успела завершиться, обводка остается */
+.draggable-div.outline-complete::after {
+  border-color: #007bff;
+  /* Чтобы псевдоэлемент точно отображал полную обводку */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Анимация «бегущей линии» */
+@keyframes running-line {
+  0% {
+    border-color: transparent;
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  }
+  25% {
+    border-color: #007bff;
+    /* Рисуем верхнюю линию */
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  }
+  50% {
+    /* Добавляем правую сторону */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 100% 100%);
+  }
+  75% {
+    /* Добавляем нижнюю сторону */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
 }

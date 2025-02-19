@@ -1,3 +1,4 @@
+export {DraggableOutlineDiv} from "./src/DraggableOutlineDiv";
 
 import "../style/menuRight.css"
 import "../style/style.css"
@@ -35,7 +36,6 @@ export * from "./updateBy";
 
 export * from "./src/leftModal2";
 export {PageVisibilityProvider} from "./src/pageVisibilityContext";
-export {PageVisibilityContext} from "./src/pageVisibilityContext";
 
 export function test(){
     return 5

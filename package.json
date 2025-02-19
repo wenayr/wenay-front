@@ -1,6 +1,6 @@
 {
   "name": "wenay-react",
-  "version": "0.0.83",
+  "version": "0.0.84",
   "description": "Common react",
   "strict": true,
   "main": "dist/index.js",
