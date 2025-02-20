@@ -7,7 +7,6 @@ import {TestParams} from "./testParams";
 import {createContext, Suspense, use, useContext, useEffect, useMemo, useState} from "react";
 import {sleepAsync} from "wenay-common";
 import {DropdownMenu, DropdownMenuTest} from "../src/RightMenu";
-import {DraggableComponent} from "../src/use_draggable_hook";
 
 
 const a = {}
@@ -22,8 +21,7 @@ export function TestMain() {
     updateBy(b)
     return <div className={"maxSize"}>
         <DropdownMenuTest/>
-        <DraggableComponent/>
-        <div style={{height: 250}}></div>
+        <div style={{height: 2250}}></div>
         {/*<ExampleUsage/>*/}
         {/*<ButtonChart/>*/}
         {/*<ButtonChart3d/>*/}

@@ -15,7 +15,7 @@
 }
 
 .menu-container{
-  position: absolute;
+  position: fixed;
   user-select: none;
   right: 0;
 }

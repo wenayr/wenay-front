@@ -172,30 +172,3 @@ export function useDraggable(
         },
     };
 }
-
-export function DraggableComponent() {
-    const {position, dragProps} = useDraggable(0, 0);
-
-    return (
-        <div
-            style={{
-                position: "absolute",
-                left: position.x,
-                top: position.y,
-            }}
-        >
-            <div
-
-                {...dragProps}
-                style={{
-                    width: 100,
-                    height: 100,
-                    background: "lightblue",
-                    cursor: "grab",
-                }}
-            >
-                Перемещаемый элемент
-            </div>
-        </div>
-    );
-}
