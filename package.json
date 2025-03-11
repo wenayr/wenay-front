@@ -1,6 +1,6 @@
 {
   "name": "wenay-react",
-  "version": "0.0.87",
+  "version": "0.0.90",
   "description": "Common react",
   "strict": true,
   "main": "dist/index.js",
@@ -44,7 +44,7 @@
     "react-dropzone": "^14.3.5",
     "react-rnd": "^10.4.14",
     "socket.io-client": "^4.8.1",
-    "wenay-common": "^1.0.195"
+    "wenay-common": "^1.0.215"
   },
   "peerDependencies": {
     "react": "^19.0.0",

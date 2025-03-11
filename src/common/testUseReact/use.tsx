@@ -1,4 +1,4 @@
-import {Button, DivRnd3, mouseMenuApi, renderBy, updateBy} from "../api";
+import {Button, DivRnd3, MenuBase, mouseMenuApi, renderBy, tMenuReact, updateBy} from "../api";
 import {GridExample, tt} from "./useGrid";
 import {ChartDemo} from "../src/myChart/1/myChartTest";
 import {MyChartEngine} from "../src/myChart/chartEngine/chartEngineReact";
@@ -21,7 +21,39 @@ export function TestMain() {
     updateBy(b)
     return <div className={"maxSize"}>
         <DropdownMenuTest/>
-        <div style={{height: 2250}}></div>
+        <mouseMenuApi.ReactMouse zIndex={15}>
+            <div style={{height: 2250}}
+                onMouseDown={e=>{
+                    console.log(e.button)
+                    if (e.button == 2) {
+                        const z: tMenuReact[] = [
+                            {name: "eee", onClick: ()=> {console.log("eee")}},
+                            {name: "eee", next: () => [
+                                    {name: "eee", onClick: ()=> {console.log("eee")}},
+                                    {name: "eee", next: () => [
+
+                                        ]},
+                                ]},
+                            {name: "eee", next: async () => [
+                                    {name: "eee", onClick: ()=> {console.log("eee")}},
+                                    {name: "eee", next: () => [
+
+                                        ]},
+                                ]},
+                            {name: "eee", func: async () => <MenuBase data={
+                                    [
+                                        {name: "eee", onClick: ()=> {console.log("eee")}},
+                                        {name: "eee", next: () => [
+
+                                            ]},
+                                    ]
+                                }/>},
+                        ]
+                        mouseMenuApi.map.set("sym", z)
+                    }
+                }}
+            ></div>
+        </mouseMenuApi.ReactMouse>
         {/*<ExampleUsage/>*/}
         {/*<ButtonChart/>*/}
         {/*<ButtonChart3d/>*/}
