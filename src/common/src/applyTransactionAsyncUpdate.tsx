@@ -1,10 +1,12 @@
 import {ColDef, GridReadyEvent} from "ag-grid-community";
-type options = {update?: boolean, add?: boolean, updateBuffer?: boolean}
+
+type options = { update?: boolean, add?: boolean, updateBuffer?: boolean }
 const optionsDef = {
     update: true,
     add: true,
     updateBuffer: true,
 }
+
 export function applyTransactionAsyncUpdate<T>(
     grid: GridReadyEvent<T, any> | null | undefined,
     newData: (Partial<T>)[],
@@ -24,7 +26,7 @@ export function applyTransactionAsyncUpdate<T>(
             // Получение ID для текущей строки
             const id = getId(e);
 
-            const newData= { ...(bufTable[id] ?? {}), ...e } as T
+            const newData = {...(bufTable[id] ?? {}), ...e} as T
             if (op.updateBuffer) bufTable[id] = newData
             // Попытка найти существующую строку по ID
             const a = grid.api.getRowNode(id)?.data;
@@ -43,55 +45,53 @@ export function applyTransactionAsyncUpdate<T>(
         // Добавление новых строк (если есть элементы)
         if (arrNew.length && op.update) {
             // добавление элементов должно быть синхронно, т.к. может прейти его update до исполнения
-            grid.api.applyTransaction({ add: arrNew });
+            grid.api.applyTransaction({add: arrNew});
         }
 
         // Асинхронное обновление существующих строк
         if (arr.length && op.add) {
-            grid.api.applyTransactionAsync({ update: arr });
+            grid.api.applyTransactionAsync({update: arr});
         }
     }
 }
 
 const map = new WeakMap()
+
 export function getUpdateTable<T>(
     grid: GridReadyEvent<T, any> | null | undefined,
     newData: (Partial<T>)[],
     getId: (...a: any[]) => string,
     bufTable: { [id: string]: Partial<T> },
-    option?: options){
+    option?: options) {
 
-    return {
-
-    }
-}
-type params<T> = {
-    gridRef: React.RefObject<GridReadyEvent<T, any> | null | undefined >
-    grid?: GridReadyEvent<T, any> | null | undefined,
-    newData: (Partial<T>)[],
-    getId: (...a: any[]) => string,
-    bufTable: { [id: string]: Partial<T> },
-    sync?: boolean,
-    option?: options
-} | {
-    gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined >
-    grid: GridReadyEvent<T, any> | null | undefined,
-    newData: (Partial<T>)[],
-    getId: (...a: any[]) => string,
-    bufTable: { [id: string]: Partial<T> },
-    sync?: boolean,
-    option?: options
-} | {
-    gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined >
-    grid?: GridReadyEvent<T, any> | null | undefined,
-    newData?: (Partial<T>)[],
-    getId: (...a: any[]) => string,
-    bufTable: { [id: string]: Partial<T> },
-    synchronization: true,
-    option?: options
+    return {}
 }
 
-export function applyTransactionAsyncUpdate2<T>(params:params<T>) {
+type CommonParams<T> = {
+    getId: (...a: any[]) => string;
+    bufTable: { [id: string]: Partial<T> };
+    option?: options;
+}
+
+type params<T> = CommonParams<T> & (
+    // Вариант с newData
+    | {
+    newData: (Partial<T>)[];
+    synchronization?: never;
+    gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined>;
+    grid?: GridReadyEvent<T, any> | null | undefined;
+}
+    // Вариант с synchronization и либо grid, либо gridRef
+    | ({
+    newData?: never;
+    synchronization: true;
+} & (
+    | { grid: GridReadyEvent<T, any> | null | undefined; gridRef?: never }
+    | { gridRef: React.RefObject<GridReadyEvent<T, any> | null | undefined>; grid?: never }
+    ))
+    );
+
+export function applyTransactionAsyncUpdate2<T>(params: params<T>) {
     const {grid, gridRef, newData, getId, bufTable} = params;
     // Установка параметров (объединение переданных опций с настройками по умолчанию)
     const op = {...optionsDef, ...(params.option ?? {})};
@@ -99,18 +99,14 @@ export function applyTransactionAsyncUpdate2<T>(params:params<T>) {
     if (grid?.api.getRowNode) {
         if (!newData) {
             applyTransactionAsyncUpdate(grid, Object.values(bufTable), getId, bufTable, op)
-        }
-        else
+        } else
             applyTransactionAsyncUpdate(grid, newData, getId, bufTable, op)
-    }
-    else if (gridRef?.current?.api.getRowNode) {
+    } else if (gridRef?.current?.api.getRowNode) {
         if (!newData) {
             applyTransactionAsyncUpdate(gridRef.current, Object.values(bufTable), getId, bufTable, op)
-        }
-        else
+        } else
             applyTransactionAsyncUpdate(gridRef.current, newData, getId, bufTable, op)
-    }
-    else {
+    } else {
         if (map.has(bufTable)) map.set(bufTable, new Set())
         const m = map.get(bufTable)
         if (newData)
@@ -118,11 +114,10 @@ export function applyTransactionAsyncUpdate2<T>(params:params<T>) {
                 // Получение ID для текущей строки
                 const id = getId(e);
                 m.add(id)
-                if (op.updateBuffer) bufTable[id] = { ...(bufTable[id] ?? {}), ...e } as T
-        }) // Убираем `null` и оставляем только существующие строки
+                if (op.updateBuffer) bufTable[id] = {...(bufTable[id] ?? {}), ...e} as T
+            }) // Убираем `null` и оставляем только существующие строки
     }
 }
-
 
 
 type UnUndefined<T extends (any | undefined)> = T extends undefined ? never : T
