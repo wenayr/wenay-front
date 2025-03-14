@@ -65,9 +65,8 @@ export function getUpdateTable<T>(
 
     }
 }
-
 type params<T> = {
-    gridRef: React.RefObject<GridReadyEvent<T, any> | null | undefined | null>
+    gridRef: React.RefObject<GridReadyEvent<T, any> | null | undefined >
     grid?: GridReadyEvent<T, any> | null | undefined,
     newData: (Partial<T>)[],
     getId: (...a: any[]) => string,
@@ -75,7 +74,7 @@ type params<T> = {
     sync?: boolean,
     option?: options
 } | {
-    gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined | null>
+    gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined >
     grid: GridReadyEvent<T, any> | null | undefined,
     newData: (Partial<T>)[],
     getId: (...a: any[]) => string,
@@ -83,7 +82,7 @@ type params<T> = {
     sync?: boolean,
     option?: options
 } | {
-    gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined | null>
+    gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined >
     grid?: GridReadyEvent<T, any> | null | undefined,
     newData?: (Partial<T>)[],
     getId: (...a: any[]) => string,
@@ -91,16 +90,8 @@ type params<T> = {
     synchronization: true,
     option?: options
 }
-export function applyTransactionAsyncUpdate2<T>(params:
-                                                {   gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined | null>
-                                                    grid?: GridReadyEvent<T, any> | null | undefined,
-                                                    newData: (Partial<T>)[],
-                                                    getId: (...a: any[]) => string,
-                                                    bufTable: { [id: string]: Partial<T> },
-                                                    sync?: boolean,
-                                                    option?: options
-                                                }
-) {
+
+export function applyTransactionAsyncUpdate2<T>(params:params<T>) {
     const {grid, gridRef, newData, getId, bufTable} = params;
     // Установка параметров (объединение переданных опций с настройками по умолчанию)
     const op = {...optionsDef, ...(params.option ?? {})};
@@ -122,12 +113,12 @@ export function applyTransactionAsyncUpdate2<T>(params:
     else {
         if (map.has(bufTable)) map.set(bufTable, new Set())
         const m = map.get(bufTable)
-
-        newData.forEach(e => {
-            // Получение ID для текущей строки
-            const id = getId(e);
-            m.add(id)
-            if (op.updateBuffer) bufTable[id] = { ...(bufTable[id] ?? {}), ...e } as T
+        if (newData)
+            newData.forEach(e => {
+                // Получение ID для текущей строки
+                const id = getId(e);
+                m.add(id)
+                if (op.updateBuffer) bufTable[id] = { ...(bufTable[id] ?? {}), ...e } as T
         }) // Убираем `null` и оставляем только существующие строки
     }
 }
