@@ -44,7 +44,7 @@
     "react-dropzone": "^14.3.5",
     "react-rnd": "^10.4.14",
     "socket.io-client": "^4.8.1",
-    "wenay-common": "^1.0.219"
+    "wenay-common": "^1.0.222"
   },
   "peerDependencies": {
     "react": "^19.0.0",
