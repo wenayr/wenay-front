@@ -83,6 +83,18 @@ export function Button({keySave, statusDef, outClick, ...data}: tButton) {
         : ButtonBase({...data, state})
 }
 
+export function ButtonHover(props: tButtonBase){
+    const [hover, setHover] = useState(false)
+    return <div
+        onMouseEnter={()=>setHover(true)}
+        onMouseLeave={()=>setHover(false)}
+        style={{position: "relative"}}
+    >
+        {typeof props.button == "function" ? props.button(hover) : props.button}
+        {hover &&
+            <div style={{position: "absolute"}}>{typeof props.children == "function" ? props.children({onClose: ()=>setHover(false)}) : props.children}</div>
+        }</div>
+}
 export const ButtonOutClick: typeof Button = ({outClick = true, ...a}) => Button({...a, outClick})
 export function ButtonAbs(...a: Parameters<typeof Button>) {
     const children: typeof a[0]["children"] = (api) =>

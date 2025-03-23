@@ -1,4 +1,4 @@
-import {Button, DivRnd3, MenuBase, mouseMenuApi, renderBy, tMenuReact, updateBy} from "../api";
+import {Button, ButtonHover, ButtonOutClick, DivRnd3, MenuBase, mouseMenuApi, renderBy, tMenuReact, updateBy} from "../api";
 import {GridExample, tt} from "./useGrid";
 import {ChartDemo} from "../src/myChart/1/myChartTest";
 import {MyChartEngine} from "../src/myChart/chartEngine/chartEngineReact";
@@ -21,6 +21,37 @@ export function TestMain() {
     updateBy(b)
     return <div className={"maxSize"}>
         <DropdownMenuTest/>
+        <div style={{margin: 80}}>
+            <ButtonHover button={()=><div >menu</div>}>
+                <MenuBase zIndex={12} coordinate={{x: 0, y: 0}} data={[
+                    {
+                        name: "test",
+                        next: ()=> [
+                            {
+                                name: "test1",
+                            },
+                            {
+                                name: "test1",
+                            },
+                            {
+                                name: "test1",
+                                next: ()=> [
+                                    {
+                                        name: "test1",
+                                    },
+                                    {
+                                        name: "test1",
+                                    },
+                                    {
+                                        name: "test1",
+                                    },
+                                ]
+                            },
+                        ]
+                    }
+                ]}/>
+            </ButtonHover>
+        </div>
         <mouseMenuApi.ReactMouse zIndex={15}>
             <div style={{height: 2250}}
                 onMouseDown={e=>{

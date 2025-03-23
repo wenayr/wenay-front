@@ -412,7 +412,8 @@ export function MenuBase({
             style={{
                 position: "absolute",
                 zIndex,
-                left: isLeftAligned ? -1 * (menuWidth + 3 + xOffset) : coordinate.x,
+                paddingLeft: 3,
+                left: (isLeftAligned ? -1 * (menuWidth + 3 + xOffset) : coordinate.x) - 3,
                 top,
                 ...alignStyle,
             }}
