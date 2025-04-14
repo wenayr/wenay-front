@@ -107,7 +107,8 @@ export function applyTransactionAsyncUpdate2<T>(params: params<T>) {
         } else
             applyTransactionAsyncUpdate(gridRef.current, newData, getId, bufTable, op)
     } else {
-        if (map.has(bufTable)) map.set(bufTable, new Set())
+        // при использовании has - иногда, он может удалиться с WeakMap (по условии WeakMap), и там будет undefined, но при этому очистка has не происходит, поэтому только get
+        if (map.get(bufTable)) map.set(bufTable, new Set())
         const m = map.get(bufTable)
         if (newData)
             newData.forEach(e => {

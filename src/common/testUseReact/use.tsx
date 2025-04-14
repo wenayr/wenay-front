@@ -7,6 +7,7 @@ import {TestParams} from "./testParams";
 import {createContext, Suspense, use, useContext, useEffect, useMemo, useState} from "react";
 import {sleepAsync} from "wenay-common";
 import {DropdownMenu, DropdownMenuTest} from "../src/RightMenu";
+// import {AppGame} from "./test2";
 
 
 const a = {}
@@ -29,9 +30,15 @@ export function TestMain() {
                         next: ()=> [
                             {
                                 name: "test1",
+                                status: true,
                             },
                             {
                                 name: "test1",
+                                getStatus: ()=> true,
+                            },
+                            {
+                                name: "test1",
+                                active: ()=> true,
                             },
                             {
                                 name: "test1",
@@ -51,6 +58,9 @@ export function TestMain() {
                     }
                 ]}/>
             </ButtonHover>
+        </div>
+        <div  style={{background: "#545454", width: 400, height: 400}}>
+
         </div>
         <mouseMenuApi.ReactMouse zIndex={15}>
             <div style={{height: 2250}}
