@@ -1,11 +1,12 @@
 import {ColDef, GridReadyEvent} from "ag-grid-community";
 
-type options = { update?: boolean, add?: boolean, updateBuffer?: boolean }
 const optionsDef = {
     update: true,
     add: true,
     updateBuffer: true,
+    sync: false
 }
+type options = Partial<typeof optionsDef>
 
 export function applyTransactionAsyncUpdate<T>(
     grid: GridReadyEvent<T, any> | null | undefined,
@@ -42,14 +43,19 @@ export function applyTransactionAsyncUpdate<T>(
         }) // Убираем `null` и оставляем только существующие строки
             .filter(e => e) as T[];
 
+        if (op.sync) {
+            grid.api.applyTransaction({add: op.add ? arrNew : [], update: op.update ? arr : []});
+            return
+        }
+
         // Добавление новых строк (если есть элементы)
-        if (arrNew.length && op.update) {
+        if (arrNew.length && op.add) {
             // добавление элементов должно быть синхронно, т.к. может прейти его update до исполнения
             grid.api.applyTransaction({add: arrNew});
         }
 
         // Асинхронное обновление существующих строк
-        if (arr.length && op.add) {
+        if (arr.length && op.update) {
             grid.api.applyTransactionAsync({update: arr});
         }
     }
@@ -107,7 +113,6 @@ export function applyTransactionAsyncUpdate2<T>(params: params<T>) {
         } else
             applyTransactionAsyncUpdate(gridRef.current, newData, getId, bufTable, op)
     } else {
-        // при использовании has - иногда, он может удалиться с WeakMap (по условии WeakMap), и там будет undefined, но при этому очистка has не происходит, поэтому только get
         if (map.get(bufTable)) map.set(bufTable, new Set())
         const m = map.get(bufTable)
         if (newData)
