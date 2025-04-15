@@ -119,7 +119,8 @@ export function applyTransactionAsyncUpdate2<T>(params: params<T>) {
             newData.forEach(e => {
                 // Получение ID для текущей строки
                 const id = getId(e);
-                m.add(id)
+                // m? - это странно, но так надо
+                m?.add(id)
                 if (op.updateBuffer) bufTable[id] = {...(bufTable[id] ?? {}), ...e} as T
             }) // Убираем `null` и оставляем только существующие строки
     }
