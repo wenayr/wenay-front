@@ -95,9 +95,9 @@ export function TestMain() {
                 }}
             ></div>
         </mouseMenuApi.ReactMouse>
-        {/*<ExampleUsage/>*/}
-        {/*<ButtonChart/>*/}
-        {/*<ButtonChart3d/>*/}
+        <ExampleUsage/>
+        <ButtonChart/>
+        <ButtonChart3d/>
         {/*<App/>*/}
         {/*<ButtonParams/>*/}
         {/*<div className={"msTradeAlt"}*/}
