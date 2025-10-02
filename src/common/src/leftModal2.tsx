@@ -79,7 +79,7 @@ function Tttt({y_, x_, api, arr, zIndex}:{
             }
             now.current.x = t
             setX(t)
-            return f()
+            f()
         }
         await f()
     }

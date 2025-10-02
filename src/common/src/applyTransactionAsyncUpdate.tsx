@@ -83,7 +83,7 @@ type params<T> = CommonParams<T> & (
     // Вариант с newData
     | {
     newData: (Partial<T>)[];
-    synchronization?: never;
+    synchronization?: never;// React.RefObject<GridReadyEvent<any, any> | null>
     gridRef?: React.RefObject<GridReadyEvent<T, any> | null | undefined>;
     grid?: GridReadyEvent<T, any> | null | undefined;
 }
